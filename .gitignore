@@ -1,0 +1,31 @@
+node_modules
+/build
+/.react-router
+worker-configuration.d.ts
+.wrangler
+.dev.vars
+.env
+*.local
+
+# Nix build outputs
+result
+result-*
+image.tar
+
+# Reference checkout of the Claude Design handoff bundle (source HTML + chats).
+# Not part of the app; kept locally for implementing the pages.
+/design-ref
+/design.tgz
+
+# CLAUDE.md is a personal pointer to AGENTS.md (the tracked guidance)
+CLAUDE.md
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea
+.vscode/*
+!.vscode/extensions.json
+
+# local verification screenshots
+/.shots

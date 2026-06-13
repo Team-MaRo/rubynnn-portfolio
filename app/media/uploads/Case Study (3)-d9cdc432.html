@@ -1,0 +1,1328 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sponte — a quieter way to be free for friends</title>
+<meta name="description" content="A concept app for the casual drop-by. Leave the porch light on for your circle." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Manrope:wght@400;500;600;700&family=Familjen+Grotesk:wght@400;500;600;700&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #f1ede4;
+    --bg-deep: #ebe5d6;
+    --card: #fbf8f1;
+    --text: #2a2018;
+    --text-soft: #4a3a2c;
+    --muted: #80715f;
+    --rule: rgba(40, 30, 20, 0.10);
+    --rule-soft: rgba(40, 30, 20, 0.06);
+    --accent: #C25F3D;
+    --accent-warm: #D97757;
+    --accent-glow: #f3c870;
+  }
+  html { scroll-behavior: smooth; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg); color: var(--text);
+    font-family: 'Manrope', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection { background: var(--accent-glow); color: var(--text); }
+
+  /* ─── Layout ─────────────────────────────────────────── */
+  .page { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+  .narrow { max-width: 680px; margin-left: auto; margin-right: auto; }
+  .wide   { max-width: 1100px; margin-left: auto; margin-right: auto; }
+
+  section.block { padding: 96px 0; border-top: 0.5px solid var(--rule); }
+  section.block:first-of-type { border-top: none; }
+
+  /* ─── Top bar ────────────────────────────────────────── */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(241, 237, 228, 0.85);
+    backdrop-filter: saturate(140%) blur(12px);
+    -webkit-backdrop-filter: saturate(140%) blur(12px);
+    border-bottom: 0.5px solid var(--rule);
+  }
+  .topbar-inner {
+    max-width: 1180px; margin: 0 auto; padding: 14px 32px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'Newsreader', serif; font-weight: 500;
+    font-size: 18px; letter-spacing: -0.3px;
+    text-decoration: none; color: var(--text);
+  }
+  .brand-dot {
+    width: 22px; height: 26px; position: relative;
+    background: radial-gradient(ellipse at 50% 60%, var(--accent-glow) 0%, transparent 65%);
+  }
+  .brand-dot::after {
+    content: ''; position: absolute; left: 50%; top: 4px;
+    transform: translateX(-50%); width: 10px; height: 14px;
+    border: 1.2px solid var(--text); border-radius: 2px;
+    background: linear-gradient(180deg, transparent 0, transparent 50%, rgba(243,200,112,0.6) 50%);
+  }
+  .topnav { display: flex; gap: 22px; margin-left: auto; }
+  .topnav a {
+    font-size: 12px; font-weight: 600; color: var(--muted);
+    text-decoration: none; letter-spacing: 0.2px;
+  }
+  .topnav a:hover { color: var(--accent); }
+
+  /* ─── Hero ───────────────────────────────────────────── */
+  .hero { padding: 88px 0 56px; }
+  .eyebrow {
+    font-size: 12px; font-weight: 700; letter-spacing: 1.4px;
+    text-transform: uppercase; color: var(--accent);
+  }
+  h1.title {
+    font-family: 'Newsreader', serif; font-weight: 400;
+    font-size: clamp(48px, 7vw, 84px); line-height: 1.02;
+    letter-spacing: -1.4px; margin: 18px 0 14px;
+    text-wrap: balance;
+  }
+  h1.title em {
+    font-style: italic; color: var(--accent);
+    font-weight: 500;
+  }
+  .lede {
+    font-family: 'Newsreader', serif; font-weight: 400;
+    font-size: 22px; line-height: 1.45; color: var(--text-soft);
+    max-width: 620px; margin-top: 6px;
+    text-wrap: pretty;
+  }
+  .meta-row {
+    display: flex; flex-wrap: wrap; gap: 36px;
+    margin-top: 44px; padding-top: 24px;
+    border-top: 0.5px solid var(--rule);
+  }
+  .meta-row dt {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.2px; color: var(--muted); margin: 0 0 6px;
+  }
+  .meta-row dd {
+    margin: 0; font-size: 15px; font-weight: 600; color: var(--text);
+  }
+  .meta-row dd a { color: var(--accent); text-decoration: none; }
+  .meta-row dd a:hover { text-decoration: underline; }
+  .meta-cell { min-width: 140px; }
+
+  /* ─── Hero stage — phone trio ──────────────────────── */
+  .hero-stage {
+    margin-top: 64px;
+    display: flex; justify-content: center; align-items: flex-end;
+    gap: 28px; padding: 56px 0 0;
+    position: relative;
+  }
+  .hero-stage::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 60%, rgba(243,200,112,0.35) 0%, transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
+  .hero-phone { position: relative; z-index: 1; }
+  .hero-phone.side { opacity: 0.92; }
+  @media (max-width: 720px) {
+    .hero-stage { gap: 12px; padding-top: 24px; }
+    .hero-stage .side { display: none; }
+  }
+
+  /* ─── Type ───────────────────────────────────────────── */
+  h2.section-title {
+    font-family: 'Newsreader', serif; font-weight: 400;
+    font-size: clamp(34px, 4.4vw, 52px); line-height: 1.05;
+    letter-spacing: -0.9px; margin: 0 0 18px;
+    text-wrap: balance;
+  }
+  h2.section-title em { font-style: italic; color: var(--accent); font-weight: 500; }
+  h3.kicker {
+    font-family: 'Manrope', sans-serif; font-weight: 700;
+    font-size: 11px; letter-spacing: 1.6px; text-transform: uppercase;
+    color: var(--accent); margin: 0 0 14px;
+  }
+  p { font-size: 17px; line-height: 1.62; color: var(--text-soft); margin: 0 0 18px; text-wrap: pretty; }
+  p strong { color: var(--text); font-weight: 700; }
+  p em { font-style: italic; color: var(--text); }
+  .pull {
+    font-family: 'Newsreader', serif; font-style: italic; font-weight: 400;
+    font-size: 28px; line-height: 1.35; color: var(--text);
+    border-left: 2px solid var(--accent); padding: 6px 0 6px 22px;
+    margin: 32px 0; text-wrap: balance;
+  }
+  .scrawl {
+    font-family: 'Caveat', cursive; font-weight: 500;
+    color: var(--accent); font-size: 22px; line-height: 1;
+    display: inline-block; transform: rotate(-2deg);
+  }
+  .caption {
+    font-size: 12px; color: var(--muted); letter-spacing: 0.2px;
+    margin-top: 14px; text-align: center;
+    font-family: 'Manrope', sans-serif;
+  }
+  .caption em { font-style: italic; color: var(--accent); }
+
+  /* ─── Two-col & grids ───────────────────────────────── */
+  .two-col {
+    display: grid; grid-template-columns: 1fr 1.1fr;
+    gap: 64px; align-items: center;
+  }
+  .two-col.reverse { grid-template-columns: 1.1fr 1fr; }
+  @media (max-width: 900px) {
+    .two-col, .two-col.reverse { grid-template-columns: 1fr; gap: 36px; }
+  }
+
+  .mock-stage {
+    background: var(--bg-deep);
+    border-radius: 24px; padding: 56px 32px;
+    display: flex; justify-content: center; align-items: center;
+    border: 0.5px solid var(--rule);
+    position: relative; overflow: hidden;
+  }
+  .mock-stage.warm::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 30%, rgba(243,200,112,0.32) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .mock-stage > * { position: relative; }
+
+  .triptych {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-top: 36px;
+  }
+  @media (max-width: 880px) {
+    .triptych { grid-template-columns: 1fr; }
+  }
+  .tile {
+    background: var(--card); border: 0.5px solid var(--rule);
+    border-radius: 18px; padding: 24px 22px 22px;
+    display: flex; flex-direction: column; gap: 14px;
+    min-height: 220px;
+  }
+  .tile .n {
+    font-family: 'Newsreader', serif; font-style: italic;
+    color: var(--accent); font-size: 14px;
+  }
+  .tile h4 {
+    font-family: 'Newsreader', serif; font-weight: 500;
+    font-size: 22px; letter-spacing: -0.3px; margin: 0;
+    line-height: 1.15;
+  }
+  .tile p { font-size: 14px; line-height: 1.55; margin: 0; }
+
+  .cross-grid {
+    display: grid; grid-template-columns: auto auto auto;
+    gap: 28px; justify-content: center; align-items: flex-end;
+    margin-top: 12px;
+  }
+  @media (max-width: 1000px) {
+    .cross-grid { grid-template-columns: 1fr; justify-items: center; }
+  }
+  .cross-cell { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .cross-cell .lbl {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.4px; color: var(--muted);
+  }
+
+  /* ─── Palette swatches ──────────────────────────────── */
+  .palette {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 12px; margin-top: 28px;
+  }
+  .sw {
+    aspect-ratio: 4 / 5; border-radius: 14px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 14px; box-sizing: border-box;
+    border: 0.5px solid var(--rule);
+    font-size: 11px; color: var(--text);
+    position: relative; overflow: hidden;
+  }
+  .sw .hex { font-weight: 700; font-family: 'Manrope', sans-serif; letter-spacing: 0.3px; }
+  .sw .nm { color: var(--muted); margin-top: 2px; }
+  .sw.dark .hex, .sw.dark .nm { color: rgba(247,243,232,0.92); }
+  .sw.dark .nm { color: rgba(247,243,232,0.6); }
+  @media (max-width: 700px) { .palette { grid-template-columns: repeat(3, 1fr); } }
+
+  /* ─── Type spec ─────────────────────────────────────── */
+  .type-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+    margin-top: 28px;
+  }
+  .type-card {
+    background: var(--card); border: 0.5px solid var(--rule);
+    border-radius: 16px; padding: 28px;
+  }
+  .type-card .label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: var(--muted); }
+  .type-card .name { font-size: 14px; font-weight: 700; color: var(--text); margin-top: 4px; }
+  .type-card .sample { margin-top: 18px; line-height: 1; }
+  .type-card.serif .sample { font-family: 'Newsreader', serif; font-size: 52px; font-weight: 400; letter-spacing: -0.6px; }
+  .type-card.serif .sample em { font-style: italic; color: var(--accent); }
+  .type-card.sans .sample { font-family: 'Manrope', sans-serif; font-size: 30px; font-weight: 600; letter-spacing: -0.4px; }
+  @media (max-width: 700px) { .type-grid { grid-template-columns: 1fr; } }
+
+  /* ─── Variants stack ────────────────────────────────── */
+  .variants {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 20px; margin-top: 32px;
+  }
+  .variants.two {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 760px; margin-left: auto; margin-right: auto;
+  }
+  @media (max-width: 900px) { .variants, .variants.two { grid-template-columns: 1fr; } }
+  .vt {
+    background: var(--card); border: 0.5px solid var(--rule);
+    border-radius: 18px; padding: 22px 22px 24px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .vt .vt-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+  }
+  .vt h4 {
+    font-family: 'Newsreader', serif; font-weight: 500;
+    font-size: 22px; margin: 0; letter-spacing: -0.3px;
+  }
+  .vt .badge {
+    font-size: 10px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--accent);
+  }
+  .vt p { font-size: 13px; line-height: 1.55; margin: 0; color: var(--muted); }
+  .vt .vt-mock {
+    margin: 6px -6px 0; border-radius: 12px;
+    background: var(--bg-deep); padding: 16px;
+    display: flex; justify-content: center; align-items: center;
+    min-height: 220px;
+    overflow: hidden;
+  }
+
+  /* ─── Closing bar ────────────────────────────────────── */
+  .closing {
+    background: var(--text); color: rgba(247,243,232,0.94);
+    border-radius: 28px; padding: 64px 56px;
+    margin-top: 64px; position: relative; overflow: hidden;
+  }
+  .closing::before {
+    content: ''; position: absolute; right: -120px; top: -120px;
+    width: 380px; height: 380px;
+    background: radial-gradient(circle, rgba(243,200,112,0.45) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .closing h2 {
+    font-family: 'Newsreader', serif; font-weight: 400;
+    font-size: clamp(32px, 4vw, 48px); line-height: 1.05; letter-spacing: -0.6px;
+    margin: 0 0 14px; color: #f7f3e8; max-width: 18ch;
+    text-wrap: balance;
+  }
+  .closing h2 em { font-style: italic; color: var(--accent-glow); font-weight: 500; }
+  .closing p {
+    color: rgba(247,243,232,0.78);
+    font-size: 16px; line-height: 1.6; max-width: 56ch;
+    margin-bottom: 24px;
+  }
+  .ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; position: relative; }
+  .cta {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 14px 22px; border-radius: 999px;
+    font-weight: 700; font-size: 14px; text-decoration: none;
+    border: 1px solid rgba(247,243,232,0.18);
+    color: rgba(247,243,232,0.94);
+    background: transparent; transition: background .15s;
+  }
+  .cta.primary {
+    background: var(--accent-warm); color: #2a2018;
+    border-color: transparent;
+  }
+  .cta:hover { background: rgba(247,243,232,0.08); }
+  .cta.primary:hover { background: var(--accent-glow); }
+
+  /* ─── Footer ─────────────────────────────────────────── */
+  footer {
+    padding: 56px 0 80px;
+    color: var(--muted); font-size: 12px;
+    display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+    border-top: 0.5px solid var(--rule); margin-top: 64px;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* ─── Mockup wrappers ────────────────────────────────── */
+  .phone-wrap, .tab-wrap, .web-wrap, .watch-wrap, .widgets-wrap {
+    position: relative; overflow: hidden;
+    border-radius: 18px;
+    background: transparent;
+  }
+  .phone-wrap[data-scale="0.55"] { width: 221px; height: 481px; }
+  .phone-wrap[data-scale="0.62"] { width: 249px; height: 542px; }
+  .phone-wrap[data-scale="0.50"] { width: 201px; height: 437px; }
+  .tab-wrap   { width: 461px; height: 346px; }
+  .web-wrap   { width: 540px; height: 369px; }
+  .watch-wrap { width: 240px; height: 280px; }
+
+  /* small section ornament */
+  .ornament {
+    display: flex; align-items: center; gap: 14px;
+    margin: 0 auto 36px; max-width: 240px;
+    color: var(--accent);
+  }
+  .ornament::before, .ornament::after {
+    content: ''; flex: 1; height: 1px; background: var(--rule);
+  }
+  .ornament svg { display: block; }
+
+  /* anchor offsets for sticky nav */
+  section.block { scroll-margin-top: 80px; }
+
+  /* ─── Chapters menu ─────────────────────────────── */
+  .chap-fab {
+    position: fixed; right: 22px; bottom: 22px; z-index: 100;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 12px 16px; border-radius: 999px;
+    background: var(--text); color: #f7f3e8;
+    font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 13px;
+    letter-spacing: 0.2px;
+    border: none; cursor: pointer;
+    box-shadow: 0 12px 32px rgba(40,30,20,0.25);
+    transition: transform .15s ease, background .15s;
+  }
+  .chap-fab:hover { background: var(--accent); transform: translateY(-1px); }
+  .chap-fab svg { display: block; }
+
+  .chap-scrim {
+    position: fixed; inset: 0; z-index: 100;
+    background: rgba(40,30,20,0.32);
+    backdrop-filter: blur(2px);
+    opacity: 0; pointer-events: none; transition: opacity .2s;
+  }
+  .chap-scrim.open { opacity: 1; pointer-events: auto; }
+
+  .chap-panel {
+    position: fixed; top: 0; right: 0; bottom: 0; z-index: 101;
+    width: 380px; max-width: 92vw;
+    background: var(--bg);
+    border-left: 0.5px solid var(--rule);
+    box-shadow: -16px 0 48px rgba(40,30,20,0.18);
+    display: flex; flex-direction: column;
+    transform: translateX(100%); transition: transform .25s ease;
+  }
+  .chap-panel.open { transform: translateX(0); }
+
+  .chap-head {
+    padding: 22px 24px 18px;
+    border-bottom: 0.5px solid var(--rule);
+    display: flex; align-items: baseline; gap: 12px;
+  }
+  .chap-head h3 {
+    margin: 0; font-family: 'Newsreader', serif; font-weight: 500;
+    font-size: 22px; letter-spacing: -0.3px; color: var(--text);
+  }
+  .chap-head .hint {
+    font-size: 11px; color: var(--muted); letter-spacing: 0.2px;
+  }
+  .chap-close {
+    margin-left: auto; background: transparent; border: none;
+    color: var(--muted); cursor: pointer; padding: 4px;
+    font-size: 20px; line-height: 1;
+  }
+  .chap-close:hover { color: var(--text); }
+
+  .chap-list {
+    list-style: none; margin: 0; padding: 12px;
+    overflow-y: auto; flex: 1;
+  }
+  .chap-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 12px 12px 8px;
+    border-radius: 12px;
+    background: var(--card);
+    border: 0.5px solid var(--rule);
+    margin-bottom: 8px;
+    cursor: grab;
+    transition: background .12s, border-color .12s, box-shadow .12s;
+  }
+  .chap-item:hover { border-color: rgba(194,95,61,0.4); }
+  .chap-item.dragging {
+    opacity: 0.5; cursor: grabbing;
+    box-shadow: 0 8px 24px rgba(40,30,20,0.18);
+  }
+  .chap-item.drop-above { box-shadow: inset 0 2px 0 var(--accent); }
+  .chap-item.drop-below { box-shadow: inset 0 -2px 0 var(--accent); }
+
+  .chap-grip {
+    display: flex; flex-direction: column; gap: 2px;
+    width: 14px; flex-shrink: 0; color: var(--muted);
+    padding: 0 2px;
+  }
+  .chap-grip span {
+    display: block; width: 3px; height: 3px; border-radius: 50%;
+    background: currentColor;
+  }
+  .chap-grip { display: grid; grid-template-columns: repeat(2, 1fr); gap: 3px; }
+
+  .chap-num {
+    font-family: 'Newsreader', serif; font-style: italic;
+    color: var(--accent); font-size: 14px;
+    min-width: 22px; text-align: center;
+  }
+  .chap-title {
+    flex: 1; min-width: 0;
+    font-size: 14px; font-weight: 600; color: var(--text);
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .chap-arrows {
+    display: flex; gap: 2px; flex-shrink: 0;
+  }
+  .chap-arrows button {
+    width: 26px; height: 26px;
+    border-radius: 7px; border: 0.5px solid var(--rule);
+    background: var(--bg);
+    color: var(--muted); cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center;
+    transition: background .12s, color .12s;
+    padding: 0;
+  }
+  .chap-arrows button:hover:not(:disabled) { background: var(--accent); color: #fff7e8; border-color: transparent; }
+  .chap-arrows button:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .chap-foot {
+    padding: 14px 24px 20px;
+    border-top: 0.5px solid var(--rule);
+    display: flex; gap: 8px;
+  }
+  .chap-foot button {
+    flex: 1; padding: 10px 14px;
+    border-radius: 10px;
+    background: var(--bg); color: var(--muted);
+    border: 0.5px solid var(--rule);
+    font-family: inherit; font-weight: 700; font-size: 12px;
+    letter-spacing: 0.3px; cursor: pointer;
+    transition: background .12s, color .12s;
+  }
+  .chap-foot button:hover { background: var(--text); color: #f7f3e8; border-color: transparent; }
+  .chap-foot button.primary { background: var(--accent); color: #fff7e8; border-color: transparent; }
+  .chap-foot button.primary:hover { background: var(--accent-warm); }
+
+  @media (max-width: 720px) {
+    .chap-fab span.lbl { display: none; }
+  }
+
+  /* What's next list */
+  .next-list { list-style: none; padding: 0; margin: 32px 0 0; }
+  .next-list li {
+    display: flex; gap: 22px; align-items: flex-start;
+    padding: 22px 0;
+    border-top: 0.5px solid var(--rule);
+  }
+  .next-list li:last-child { border-bottom: 0.5px solid var(--rule); }
+  .next-list .n-num {
+    font-family: 'Newsreader', serif; font-style: italic;
+    color: var(--accent); font-size: 18px;
+    min-width: 28px; padding-top: 4px;
+  }
+  .next-list strong {
+    display: block; font-size: 19px; font-weight: 600; color: var(--text);
+    margin-bottom: 6px; letter-spacing: -0.2px;
+  }
+  .next-list p { margin: 0; font-size: 15px; line-height: 1.55; }
+</style>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<template id="__bundler_thumbnail">
+  <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+    <rect width="400" height="400" fill="#f1ede4"/>
+    <defs>
+      <radialGradient id="glow" cx="50%" cy="60%" r="50%">
+        <stop offset="0%" stop-color="#f3c870" stop-opacity="0.9"/>
+        <stop offset="100%" stop-color="#f3c870" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <circle cx="200" cy="220" r="150" fill="url(#glow)"/>
+    <g transform="translate(160 130)">
+      <rect x="10" y="0" width="60" height="14" fill="#2a2018"/>
+      <rect x="0" y="14" width="80" height="120" fill="#2a2018"/>
+      <rect x="14" y="34" width="52" height="80" fill="#f3c870"/>
+      <rect x="34" y="134" width="12" height="14" fill="#2a2018"/>
+    </g>
+    <text x="200" y="320" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="28" fill="#2a2018">Sponte</text>
+    <text x="200" y="346" text-anchor="middle" font-family="system-ui, sans-serif" font-size="11" letter-spacing="2" fill="#80715f">CASE STUDY</text>
+  </svg>
+</template>
+
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#top">
+      <span class="brand-dot"></span>
+      <span>Sponte · <em style="font-style:italic;color:var(--accent)">case&nbsp;study</em></span>
+    </a>
+    <nav class="topnav">
+      <a href="#premise">Premise</a>
+      <a href="#concept">Concept</a>
+      <a href="#cross">Cross-platform</a>
+      <a href="#ambient">Ambient</a>
+      <a href="#system">System</a>
+      <a href="#reflection">Reflection</a>
+    </nav>
+  </div>
+</div>
+
+<!-- ─── Chapters menu ──────────────────────────────────── -->
+<button class="chap-fab" id="chap-open" aria-label="Reorder chapters">
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+    <line x1="3" y1="4" x2="13" y2="4"/>
+    <line x1="3" y1="8" x2="13" y2="8"/>
+    <line x1="3" y1="12" x2="10" y2="12"/>
+  </svg>
+  <span class="lbl">Chapters</span>
+</button>
+
+<div class="chap-scrim" id="chap-scrim"></div>
+
+<aside class="chap-panel" id="chap-panel" aria-hidden="true">
+  <div class="chap-head">
+    <div>
+      <h3>Chapters</h3>
+      <div class="hint">Drag, or use ↑ ↓ to reorder. Click a row to jump there.</div>
+    </div>
+    <button class="chap-close" id="chap-close" aria-label="Close">×</button>
+  </div>
+  <ol class="chap-list" id="chap-list"></ol>
+  <div class="chap-foot">
+    <button id="chap-reset">Reset</button>
+    <button id="chap-jump" class="primary">Back to top</button>
+  </div>
+</aside>
+
+<div class="page" id="top">
+
+  <!-- ─── Hero ─────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="narrow" style="margin-left:0">
+      <div class="eyebrow">Concept · iOS, Android, iPadOS, Web · 2025</div>
+      <h1 class="title">A quieter way to be <em>free for friends.</em></h1>
+      <p class="lede">
+        Sponte is a concept app for the casual drop-by. Light a lantern when you're around — your circle sees the porch is on, and the people who care to swing by, do.
+      </p>
+    </div>
+
+    <dl class="meta-row">
+      <div class="meta-cell">
+        <dt>Role</dt>
+        <dd>Solo · concept, design, prototype</dd>
+      </div>
+      <div class="meta-cell">
+        <dt>Surfaces</dt>
+        <dd>iOS · Android · iPad · Web · Watch</dd>
+      </div>
+      <div class="meta-cell">
+        <dt>Scope</dt>
+        <dd>15 sections · ~70 screens</dd>
+      </div>
+      <div class="meta-cell">
+        <dt>Live</dt>
+        <dd><a href="Sponte.html">Open the full canvas →</a></dd>
+      </div>
+    </dl>
+
+    <!-- Hero stage: three phones, lit lantern centre -->
+    <div class="hero-stage">
+      <div class="hero-phone side"><div class="phone-wrap" data-scale="0.50" data-mock="home-unlit" data-platform="ios"></div></div>
+      <div class="hero-phone"><div class="phone-wrap" data-scale="0.62" data-mock="home-lit" data-platform="ios"></div></div>
+      <div class="hero-phone side"><div class="phone-wrap" data-scale="0.50" data-mock="friends" data-platform="android"></div></div>
+    </div>
+    <div class="caption">Three states of one screen — <em>unlit, lit,</em> and <em>who's free</em>.</div>
+  </section>
+
+  <!-- ─── Premise ──────────────────────────────────────── -->
+  <section class="block" id="premise">
+    <div class="narrow">
+      <h3 class="kicker">01 · The premise</h3>
+      <h2 class="section-title">Adult friendships die by <em>scheduling.</em></h2>
+      <p>
+        Most of the people we love most live within thirty minutes of us. We see them less than we'd like — not because we're busy, but because seeing them takes a calendar, two reschedules, and a restaurant booking. The threshold is too high for "I'd just like to sit with you."
+      </p>
+      <p>
+        Sponte makes <em>"I'm around if anyone wants to swing by"</em> a single tap. No invitations. No replies expected. No event. Just a lantern in the window, on or off, for the people you already trust.
+      </p>
+
+      <div class="pull">
+        Calendars are for strangers. Friends should know where the porch light is.
+      </div>
+
+      <p>
+        Everything in the app comes back to one decision: <strong>is your lantern lit, and for whom?</strong> The product is the answer to that question, surfaced wherever you happen to look — your phone, your wrist, your home screen, your laptop.
+      </p>
+    </div>
+  </section>
+
+  <!-- ─── Concept / lantern metaphor ──────────────────── -->
+  <section class="block" id="concept">
+    <div class="wide">
+      <h3 class="kicker" style="text-align:center">02 · The metaphor</h3>
+      <h2 class="section-title" style="text-align:center">A lantern, not a <em>status.</em></h2>
+      <p class="narrow" style="text-align:center">
+        "Free now / busy / DND" reads like a slack indicator. A lantern reads like a place. Concrete, warm, already understood. Every interaction in the app is a thing you can do to a lantern — light it, dim it, leave it on a timer, let the right people see it.
+      </p>
+
+      <div class="triptych">
+        <div class="tile">
+          <div class="n">i.</div>
+          <h4>Lit, dim, or on a timer.</h4>
+          <p>Tap to light. The lantern stays on until a time you set — 30 min, an hour, until dinner. You don't have to remember to dim it; it ages out on its own.</p>
+        </div>
+        <div class="tile">
+          <div class="n">ii.</div>
+          <h4>For a circle, not the public.</h4>
+          <p>Only people you've added can see your lantern. Within that, you choose: everyone, a group, or specific names. Privacy is the default, not a setting.</p>
+        </div>
+        <div class="tile">
+          <div class="n">iii.</div>
+          <h4>With an optional ask.</h4>
+          <p>"Bring something" and "mood" are tiny add-ons — a bottle of wine, a book to read in the same room. They're optional because most lanterns don't need them.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Variants ─────────────────────────────────────── -->
+  <section class="block" id="variants">
+    <div class="wide">
+      <h3 class="kicker">03 · Seeing your circle</h3>
+      <h2 class="section-title">Two ways to show <em>who's around.</em></h2>
+      <p class="narrow">
+        Once your lantern is lit, the next question is who else's is. I explored two layouts — each makes a different trade between density and presence. The list shipped as default; the grid is a one-tap layout switch.
+      </p>
+
+      <div class="variants two">
+        <div class="vt">
+          <div class="vt-head">
+            <h4>List</h4>
+            <span class="badge">Default</span>
+          </div>
+          <div class="vt-mock">
+            <div class="phone-wrap" data-scale="0.55" data-mock="friends-list" data-platform="ios"></div>
+          </div>
+          <p>Names, faces, time-left. The most legible layout — best when you're deciding who to text next.</p>
+        </div>
+        <div class="vt">
+          <div class="vt-head">
+            <h4>Grid</h4>
+            <span class="badge">Social</span>
+          </div>
+          <div class="vt-mock">
+            <div class="phone-wrap" data-scale="0.55" data-mock="friends-grid" data-platform="ios"></div>
+          </div>
+          <p>Bigger avatars, lower density. Reads like a friend's wall — fewer details, more presence.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Cross-platform ────────────────────────────────── -->
+  <section class="block" id="cross">
+    <div class="wide">
+      <h3 class="kicker" style="text-align:center">04 · Range</h3>
+      <h2 class="section-title" style="text-align:center">Same lantern, <em>every surface.</em></h2>
+      <p class="narrow" style="text-align:center">
+        A circle isn't on one device. Some people live in a browser; some never leave the wrist. The same home state — your lantern, your friends' lanterns — renders cleanly on phone, tablet, and web, with each surface earning the space it gets.
+      </p>
+
+      <div class="cross-grid">
+        <div class="cross-cell">
+          <div class="phone-wrap" data-scale="0.55" data-mock="home-lit" data-platform="ios"></div>
+          <div class="lbl">iOS · phone</div>
+        </div>
+        <div class="cross-cell">
+          <div class="tab-wrap" data-mock="home-lit-tablet"></div>
+          <div class="lbl">iPadOS · tablet</div>
+        </div>
+        <div class="cross-cell">
+          <div class="web-wrap" data-mock="home-lit-web"></div>
+          <div class="lbl">Web · desktop</div>
+        </div>
+      </div>
+      <div class="caption">Sidebar nav on web, single column on phone, two-column reading on iPad — same data, three densities.</div>
+    </div>
+  </section>
+
+  <!-- ─── Ambient ────────────────────────────────────── -->
+  <section class="block" id="ambient">
+    <div class="two-col reverse">
+      <div class="mock-stage warm">
+        <div class="phone-wrap" data-scale="0.55" data-mock="live" data-platform="ios"></div>
+      </div>
+      <div>
+        <h3 class="kicker">05 · Ambient surfaces</h3>
+        <h2 class="section-title">Out of the way, <em>still on.</em></h2>
+        <p>
+          A lantern is something you glance at. It doesn't deserve a notification every time someone's around. Sponte lives where glances already happen — a Live Activity on the lock screen, a complication on your wrist, a home-screen widget you scan on the way out the door.
+        </p>
+        <p>
+          You open the app to <strong>change</strong> your lantern's state. The rest of the time, the app stays quiet — your lantern is visible on your lock screen, watch face, and home screen without you having to look for it.
+        </p>
+        <p>
+          <span class="scrawl">a status, not an inbox →</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="triptych" style="margin-top:48px">
+      <div class="tile" style="align-items:center;text-align:center;padding-bottom:28px">
+        <h4>Live Activity</h4>
+        <div class="inline-watch" style="margin:8px auto 0;display:flex;justify-content:center">
+          <div class="phone-wrap" data-scale="0.40" data-mock="live" data-platform="ios"></div>
+        </div>
+        <p>The lantern lives on the lock screen for as long as it's lit. Tap to dim without unlocking.</p>
+      </div>
+      <div class="tile" style="align-items:center;text-align:center;padding-bottom:28px">
+        <h4>Apple Watch</h4>
+        <div class="watch-face" style="margin:14px auto 6px">
+          <!-- inline watch face — drawn as static SVG so it never breaks -->
+          <svg width="160" height="190" viewBox="0 0 160 190" aria-hidden="true">
+            <defs>
+              <radialGradient id="watch-glow" cx="50%" cy="54%" r="45%">
+                <stop offset="0%" stop-color="#F3C870" stop-opacity="0.55"/>
+                <stop offset="100%" stop-color="#F3C870" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <!-- bezel -->
+            <rect x="10" y="10" width="140" height="170" rx="32" fill="#0a0604"/>
+            <rect x="152" y="58" width="6" height="24" rx="3" fill="#2a2a2a"/>
+            <rect x="153" y="96" width="5" height="18" rx="2" fill="#2a2a2a"/>
+            <!-- screen -->
+            <rect x="20" y="20" width="120" height="150" rx="22" fill="#0a0604"/>
+            <rect x="20" y="20" width="120" height="150" rx="22" fill="url(#watch-glow)"/>
+            <!-- time -->
+            <text x="80" y="42" text-anchor="middle" fill="#fff" opacity="0.7" font-family="Manrope, sans-serif" font-size="10" font-weight="700" letter-spacing="1">2:14</text>
+            <!-- lantern silhouette -->
+            <g transform="translate(64 52)">
+              <line x1="16" y1="0" x2="16" y2="6" stroke="#fff" stroke-width="1" opacity="0.7"/>
+              <rect x="10" y="6" width="12" height="3" rx="1" fill="#fff" opacity="0.85"/>
+              <rect x="6" y="9" width="20" height="30" rx="3" fill="#F3C870"/>
+              <rect x="10" y="14" width="12" height="22" rx="1.5" fill="#F4D38C"/>
+              <rect x="4" y="39" width="24" height="5" rx="1.5" fill="#fff" opacity="0.85"/>
+              <rect x="14" y="44" width="4" height="5" fill="#fff" opacity="0.85"/>
+            </g>
+            <!-- caption -->
+            <text x="80" y="122" text-anchor="middle" fill="#fff" font-family="Newsreader, serif" font-size="12" font-weight="500">Lit until <tspan font-style="italic" fill="#F3C870">4:30</tspan></text>
+            <text x="80" y="138" text-anchor="middle" fill="#fff" opacity="0.6" font-family="Manrope, sans-serif" font-size="9">3 friends lit nearby</text>
+            <!-- avatars row -->
+            <g transform="translate(60 148)">
+              <circle cx="6" cy="6" r="6" fill="#C25F3D" stroke="#0a0604" stroke-width="1.2"/>
+              <circle cx="16" cy="6" r="6" fill="#6B8FA8" stroke="#0a0604" stroke-width="1.2"/>
+              <circle cx="26" cy="6" r="6" fill="#8FA66B" stroke="#0a0604" stroke-width="1.2"/>
+            </g>
+          </svg>
+        </div>
+        <p>Glance at who's free or take down
+your light in one click.</p>
+      </div>
+      <div class="tile" style="align-items:center;text-align:center;padding-bottom:28px">
+        <h4>Home-screen widgets</h4>
+        <div style="margin:8px 0">
+          <div class="tab-wrap" data-mock="widgets-tablet" style="margin:0 auto;width:300px;height:225px"></div>
+        </div>
+        <p>Small, medium, large. Tap the widget and the magic moment opens straight into it.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── System ────────────────────────────────────────── -->
+  <section class="block" id="system">
+    <div class="wide">
+      <h3 class="kicker">06 · Visual system</h3>
+      <h2 class="section-title">Cream, coral, <em>candlelight.</em></h2>
+      <p class="narrow">
+        The palette is a porch at dusk. Warm cream as paper, charcoal as ink, coral as the lantern, honey as the glow. Greys are tinted toward brown so nothing feels like a spreadsheet. A serif (Newsreader) carries the brand voice; a humanist sans (Manrope) carries the interface; a handwritten accent (Caveat) shows up as marginalia.
+      </p>
+
+      <div class="palette">
+        <div class="sw" style="background:#f1ede4"><span class="hex">#F1EDE4</span><span class="nm">Paper</span></div>
+        <div class="sw" style="background:#fbf8f1"><span class="hex">#FBF8F1</span><span class="nm">Surface</span></div>
+        <div class="sw" style="background:#C25F3D;color:#fff7e8" class="dark"><span class="hex" style="color:#fff7e8">#C25F3D</span><span class="nm" style="color:rgba(255,247,232,0.7)">Lantern</span></div>
+        <div class="sw" style="background:#f3c870"><span class="hex">#F3C870</span><span class="nm">Glow</span></div>
+        <div class="sw dark" style="background:#2a2018;color:#f7f3e8"><span class="hex">#2A2018</span><span class="nm">Ink</span></div>
+      </div>
+
+      <div class="type-grid">
+        <div class="type-card serif">
+          <div class="label">Display</div>
+          <div class="name">Newsreader · regular & italic</div>
+          <div class="sample">Lit until <em>4:30</em></div>
+        </div>
+        <div class="type-card sans">
+          <div class="label">Interface</div>
+          <div class="name">Manrope · 500 / 700</div>
+          <div class="sample">Who's free tonight</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Reflection ────────────────────────────────────── -->
+  <section class="block" id="reflection">
+    <div class="narrow">
+      <h3 class="kicker">07 · What's next</h3>
+      <h2 class="section-title">From canvas to <em>real hands.</em></h2>
+      <ul class="next-list">
+        <li>
+          <span class="n-num">i.</span>
+          <div>
+            <strong>Testing the usability.</strong>
+            <p>Put the prototype in front of real people. The lantern metaphor is intuitive on paper — it has to feel intuitive in a thumb.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n-num">ii.</span>
+          <div>
+            <strong>Creating all the icons by hand.</strong>
+            <p>Every glyph in the app deserves the same attention as the lantern itself. A consistent, hand-drawn icon set is next — same warm line weight, same quiet personality.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n-num">iii.</span>
+          <div>
+            <strong>Bringing the app from the canvas into code.</strong>
+            <p>The next step is a working build — real animations, real notifications, real friends lighting real lanterns. The canvas was the rehearsal; the build is the play.</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="narrow closing">
+      <h2>Take a longer look — open the <em>full canvas.</em></h2>
+      <p>Every screen, every state, every platform — pannable on one canvas. Toggle dark mode, swap time pickers, focus a single section. The same prototype I designed against.</p>
+      <div class="ctas">
+        <a class="cta primary" href="Sponte.html">Open the canvas →</a>
+        <a class="cta" href="sections/index.html">Browse by section</a>
+      </div>
+    </div>
+
+    <footer>
+      <div>© 2025 · Sponte is a concept project. Not affiliated with any product.</div>
+      <div><a href="Sponte.html">Live prototype</a> · <a href="sections/index.html">Section pages</a></div>
+    </footer>
+  </section>
+</div>
+
+<!-- ─── React components used inline ────────────────────── -->
+<script type="text/babel" src="ios-frame.jsx"></script>
+<script type="text/babel" src="android-frame.jsx"></script>
+<script type="text/babel" src="browser-window.jsx"></script>
+<script type="text/babel" src="screens.jsx"></script>
+<script type="text/babel" src="screens2.jsx"></script>
+<script type="text/babel" src="screens3.jsx"></script>
+<script type="text/babel" src="screens4.jsx"></script>
+<script type="text/babel" src="screens5.jsx"></script>
+<script type="text/babel" src="screens6.jsx"></script>
+<script type="text/babel" src="screens7.jsx"></script>
+<script src="search-bar.js"></script>
+
+<script type="text/babel">
+/* ─────────────────────────────────────────────────────────────
+   Inline mockup renderer
+   Finds [data-mock] elements and mounts the matching screen
+   inside the right device frame, at the requested scale.
+   Components live on window (exported from each screens*.jsx).
+   Pull them off explicitly — babel's strict mode won't auto-fall-back.
+   ───────────────────────────────────────────────────────────── */
+
+const {
+  THEMES, ThemeShell, IOSDevice, AndroidDevice, ChromeWindow,
+  HomeWithSwitcher, HomeUnlitScreen, MoodScreen, LiveActivityScreen,
+  WatchScreen, WatchLanternMenu, FriendProfileScreen, LoginScreen,
+  HomeWeb, FriendsWeb, LanternSheetWeb, MarketingLandingPage,
+  WidgetsScreenTablet,
+} = window;
+
+const T = THEMES.A;
+const isDark = false;
+
+function Shell({ children }) {
+  return <ThemeShell theme={T} dark={isDark}>{children}</ThemeShell>;
+}
+
+// ─── Phone mockup
+function PhoneMock({ scale = 0.55, platform = 'ios', kind }) {
+  const W = platform === 'ios' ? 402 : 412;
+  const H = platform === 'ios' ? 874 : 892;
+  const Device = platform === 'ios' ? IOSDevice : AndroidDevice;
+
+  let Screen, props = { platform, showMascot: true, timePicker: 'dial', view: 'list' };
+  switch (kind) {
+    case 'home-unlit':       Screen = HomeUnlitScreen; break;
+    case 'home-lit':         Screen = HomeWithSwitcher; props.mode = 'home'; break;
+    case 'friends':          Screen = HomeWithSwitcher; props.mode = 'friends'; break;
+    case 'friends-list':     Screen = HomeWithSwitcher; props.mode = 'friends'; props.view = 'list'; break;
+    case 'friends-grid':     Screen = HomeWithSwitcher; props.mode = 'friends'; props.view = 'grid'; break;
+    case 'sheet':            Screen = HomeWithSwitcher; props.mode = 'home'; props.showSheet = true; break;
+    case 'mood':             Screen = MoodScreen; break;
+    case 'live':             Screen = LiveActivityScreen; break;
+    case 'profile':          Screen = FriendProfileScreen; break;
+    case 'login':            Screen = LoginScreen; break;
+    default:                 Screen = HomeWithSwitcher; props.mode = 'home';
+  }
+
+  return (
+    <div style={{
+      width: W * scale, height: H * scale,
+      position: 'relative', overflow: 'hidden',
+    }}>
+      <div style={{
+        position: 'absolute', top: 0, left: 0,
+        width: W, height: H,
+        transform: `scale(${scale})`, transformOrigin: 'top left',
+      }}>
+        <Shell>
+          <Device width={W} height={H} dark={isDark}>
+            <Screen {...props} />
+          </Device>
+        </Shell>
+      </div>
+    </div>
+  );
+}
+
+// ─── Tablet mockup (iPad landscape)
+function TabletMock({ kind, scale = 0.45 }) {
+  const W = 1024, H = 768;
+  const cardW = Math.round(W * scale), cardH = Math.round(H * scale);
+
+  let WebComp;
+  switch (kind) {
+    case 'home-lit-tablet': WebComp = HomeWeb; break;
+    case 'widgets-tablet':  WebComp = WidgetsScreenTablet; break;
+    case 'friends-tablet':  WebComp = FriendsWeb; break;
+    default:                WebComp = HomeWeb;
+  }
+
+  // Widgets tablet renders a full home screen, not in a tablet bezel —
+  // include the bezel so it reads "device" not "app."
+  return (
+    <div style={{
+      width: cardW, height: cardH, position: 'relative', overflow: 'hidden',
+      background: '#0a0604', padding: 6, boxSizing: 'border-box', borderRadius: 18,
+    }}>
+      <div style={{
+        position: 'absolute', top: 0, left: 0, width: W, height: H,
+        transform: `scale(${scale})`, transformOrigin: 'top left',
+        padding: 14, boxSizing: 'border-box',
+      }}>
+        <div style={{
+          width: '100%', height: '100%', position: 'relative',
+          borderRadius: 22, overflow: 'hidden', background: '#0e0a04',
+        }}>
+          <div style={{ position: 'absolute', top: 8, left: '50%', transform: 'translateX(-50%)',
+            width: 6, height: 6, borderRadius: 4, background: '#1c1c1c', zIndex: 5 }} />
+          <div style={{ width: '100%', height: '100%', overflow: 'hidden' }}>
+            <Shell><WebComp /></Shell>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Web mockup (browser chrome + sidebar app)
+function WebMock({ kind, scale = 0.45 }) {
+  const W = 1200, H = 820;
+  let WebComp;
+  switch (kind) {
+    case 'home-lit-web':  WebComp = HomeWeb; break;
+    case 'friends-web':   WebComp = FriendsWeb; break;
+    case 'sheet-web':     WebComp = LanternSheetWeb; break;
+    case 'marketing':     WebComp = MarketingLandingPage; break;
+    default:              WebComp = HomeWeb;
+  }
+  return (
+    <div style={{
+      width: W * scale, height: H * scale,
+      position: 'relative', overflow: 'hidden',
+      borderRadius: 12, background: '#202124',
+    }}>
+      <div style={{
+        position: 'absolute', top: 0, left: 0, width: W, height: H,
+        transform: `scale(${scale})`, transformOrigin: 'top left',
+      }}>
+        <ChromeWindow width={W} height={H} url="sponte.so/app" tabs={[{ title: 'Sponte' }]} activeIndex={0}>
+          <Shell><WebComp /></Shell>
+        </ChromeWindow>
+      </div>
+    </div>
+  );
+}
+
+// ─── Watch mockup (no bezel needed — WatchScreen draws its own)
+function WatchMock({ kind = 'watch', scale = 1 }) {
+  let Screen = WatchScreen;
+  if (kind === 'watch-menu') Screen = WatchLanternMenu;
+  return (
+    <div style={{
+      width: 220 * scale, height: 260 * scale,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+    }}>
+      <Shell>
+        <Screen platform="ios" />
+      </Shell>
+    </div>
+  );
+}
+
+/* Boot — find each [data-mock] node and mount the appropriate root */
+function mountAll() {
+  document.querySelectorAll('[data-mock]').forEach(node => {
+    const kind = node.getAttribute('data-mock');
+    const platform = node.getAttribute('data-platform') || 'ios';
+    const scale = parseFloat(node.getAttribute('data-scale') || '0.55');
+
+    let el;
+    if (kind.startsWith('watch')) {
+      el = <WatchMock kind={kind} scale={kind === 'watch' ? 1 : 0.85} />;
+    } else if (kind.endsWith('-tablet')) {
+      el = <TabletMock kind={kind} scale={kind === 'widgets-tablet' ? 0.30 : 0.45} />;
+    } else if (kind.endsWith('-web')) {
+      el = <WebMock kind={kind} scale={0.45} />;
+    } else {
+      el = <PhoneMock kind={kind} platform={platform} scale={scale} />;
+    }
+    ReactDOM.createRoot(node).render(el);
+  });
+}
+
+// Wait a tick so all babel scripts finish.
+setTimeout(mountAll, 60);
+</script>
+
+<!-- ─── Chapter reorder + nav menu ────────────────────────── -->
+<script>
+(function () {
+  const panel  = document.getElementById('chap-panel');
+  const scrim  = document.getElementById('chap-scrim');
+  const openB  = document.getElementById('chap-open');
+  const closeB = document.getElementById('chap-close');
+  const list   = document.getElementById('chap-list');
+  const resetB = document.getElementById('chap-reset');
+  const jumpB  = document.getElementById('chap-jump');
+
+  const container = document.querySelector('.page');
+  // The reorderable chapters are every <section class="block">. The closing card
+  // (Open the canvas + footer) lives inside the last section but isn't a chapter —
+  // we leave the parent .page in DOM order and only shuffle sections inside it.
+  const STORAGE_KEY = 'sponte_case_study_chapter_order_v1';
+
+  function chapters() {
+    return Array.from(container.querySelectorAll(':scope > section.block'));
+  }
+
+  function readTitle(sec) {
+    const h2 = sec.querySelector('h2.section-title');
+    if (h2) {
+      // strip the "." at the end if present
+      return h2.textContent.replace(/\s+/g, ' ').replace(/\.$/, '').trim();
+    }
+    const k = sec.querySelector('h3.kicker');
+    return k ? k.textContent.replace(/^\d+\s*·\s*/, '').trim() : 'Untitled';
+  }
+
+  function originalOrder() {
+    return chapters().map(s => s.id || '');
+  }
+
+  let ORIGINAL = originalOrder();
+
+  function renumberKickers() {
+    chapters().forEach((sec, i) => {
+      const k = sec.querySelector('h3.kicker');
+      if (!k) return;
+      const num = String(i + 1).padStart(2, '0');
+      // Replace leading "NN ·" with the new number
+      k.textContent = k.textContent.replace(/^(\d+)\s*·\s*/, num + ' · ');
+      // Keep the original original-text intact if no leading number
+      if (!/^\d+\s*·/.test(k.textContent)) {
+        k.textContent = num + ' · ' + k.textContent;
+      }
+    });
+  }
+
+  function applyOrder(idOrder) {
+    const map = new Map(chapters().map(s => [s.id, s]));
+    idOrder.forEach(id => {
+      const node = map.get(id);
+      if (node) container.appendChild(node);
+    });
+    renumberKickers();
+    rebuildList();
+  }
+
+  function saveOrder() {
+    const ids = chapters().map(s => s.id).filter(Boolean);
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(ids)); } catch (e) {}
+  }
+
+  function loadOrder() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      const arr = JSON.parse(raw);
+      if (!Array.isArray(arr)) return null;
+      // Validate: only use if it covers the same set of sections
+      const cur = new Set(chapters().map(s => s.id));
+      if (arr.length !== cur.size) return null;
+      if (!arr.every(id => cur.has(id))) return null;
+      return arr;
+    } catch (e) { return null; }
+  }
+
+  function ensureIds() {
+    chapters().forEach((sec, i) => {
+      if (!sec.id) sec.id = 'chap-' + i;
+    });
+  }
+
+  function move(idx, dir) {
+    const all = chapters();
+    const tgt = idx + dir;
+    if (tgt < 0 || tgt >= all.length) return;
+    if (dir < 0) container.insertBefore(all[idx], all[tgt]);
+    else container.insertBefore(all[tgt], all[idx]);
+    renumberKickers();
+    saveOrder();
+    rebuildList();
+  }
+
+  // Drag & drop reorder inside the panel
+  let dragId = null;
+
+  function rebuildList() {
+    list.innerHTML = '';
+    const all = chapters();
+    all.forEach((sec, i) => {
+      const li = document.createElement('li');
+      li.className = 'chap-item';
+      li.draggable = true;
+      li.dataset.target = sec.id;
+
+      li.innerHTML =
+        '<div class="chap-grip" aria-hidden="true">' +
+          '<span></span><span></span><span></span><span></span><span></span><span></span>' +
+        '</div>' +
+        '<div class="chap-num">' + String(i + 1).padStart(2, '0') + '</div>' +
+        '<div class="chap-title"></div>' +
+        '<div class="chap-arrows">' +
+          '<button class="up" aria-label="Move up"' + (i === 0 ? ' disabled' : '') + '>' +
+            '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 7 6 4 9 7"></polyline></svg>' +
+          '</button>' +
+          '<button class="down" aria-label="Move down"' + (i === all.length - 1 ? ' disabled' : '') + '>' +
+            '<svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 5 6 8 9 5"></polyline></svg>' +
+          '</button>' +
+        '</div>';
+      li.querySelector('.chap-title').textContent = readTitle(sec);
+
+      li.querySelector('.up').addEventListener('click', (e) => {
+        e.stopPropagation(); move(i, -1);
+      });
+      li.querySelector('.down').addEventListener('click', (e) => {
+        e.stopPropagation(); move(i, +1);
+      });
+
+      li.addEventListener('click', () => {
+        const target = document.getElementById(li.dataset.target);
+        if (!target) return;
+        closePanel();
+        // Wait for panel close, then scroll
+        setTimeout(() => {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 260);
+      });
+
+      // ── Drag and drop
+      li.addEventListener('dragstart', (e) => {
+        dragId = sec.id;
+        li.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+        try { e.dataTransfer.setData('text/plain', sec.id); } catch (ex) {}
+      });
+      li.addEventListener('dragend', () => {
+        li.classList.remove('dragging');
+        Array.from(list.children).forEach(c => c.classList.remove('drop-above', 'drop-below'));
+        dragId = null;
+      });
+      li.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        if (!dragId || dragId === sec.id) return;
+        const r = li.getBoundingClientRect();
+        const above = (e.clientY - r.top) < r.height / 2;
+        li.classList.toggle('drop-above', above);
+        li.classList.toggle('drop-below', !above);
+      });
+      li.addEventListener('dragleave', () => {
+        li.classList.remove('drop-above', 'drop-below');
+      });
+      li.addEventListener('drop', (e) => {
+        e.preventDefault();
+        if (!dragId || dragId === sec.id) return;
+        const r = li.getBoundingClientRect();
+        const above = (e.clientY - r.top) < r.height / 2;
+        const src = document.getElementById(dragId);
+        const dst = sec;
+        if (!src || !dst) return;
+        if (above) container.insertBefore(src, dst);
+        else       container.insertBefore(src, dst.nextSibling);
+        renumberKickers();
+        saveOrder();
+        rebuildList();
+      });
+
+      list.appendChild(li);
+    });
+  }
+
+  function openPanel() {
+    panel.classList.add('open');
+    scrim.classList.add('open');
+    panel.setAttribute('aria-hidden', 'false');
+    rebuildList();
+  }
+  function closePanel() {
+    panel.classList.remove('open');
+    scrim.classList.remove('open');
+    panel.setAttribute('aria-hidden', 'true');
+  }
+
+  openB.addEventListener('click', openPanel);
+  closeB.addEventListener('click', closePanel);
+  scrim.addEventListener('click', closePanel);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && panel.classList.contains('open')) closePanel();
+  });
+
+  resetB.addEventListener('click', () => {
+    applyOrder(ORIGINAL);
+    saveOrder();
+  });
+  jumpB.addEventListener('click', () => {
+    closePanel();
+    setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 260);
+  });
+
+  // ── Boot
+  ensureIds();
+  ORIGINAL = originalOrder();
+  const saved = loadOrder();
+  if (saved) applyOrder(saved);
+  else renumberKickers();
+})();
+</script>
+
+</body>
+</html>

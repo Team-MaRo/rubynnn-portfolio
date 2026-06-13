@@ -1,0 +1,18 @@
+# https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/about-code-owners
+# Last matching pattern wins. Only ONE listed owner needs to approve, not all.
+
+# Default owner for everything.
+* @Rubynnn
+
+# Files Dependabot manages — @Team-MaRo/CI (incl. the bot user) can also review,
+# so the bot's auto-approval satisfies the code-owner requirement on these paths.
+# github-actions
+/.github/workflows/ @Rubynnn @Team-MaRo/CI
+# devcontainers
+/.devcontainer/ @Rubynnn @Team-MaRo/CI
+# npm
+/package.json @Rubynnn @Team-MaRo/CI
+/pnpm-lock.yaml @Rubynnn @Team-MaRo/CI
+# nix
+/flake.nix @Rubynnn @Team-MaRo/CI
+/flake.lock @Rubynnn @Team-MaRo/CI

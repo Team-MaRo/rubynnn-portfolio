@@ -1,0 +1,37 @@
+brand:
+  name: Robine's Space
+  short_name: Robine
+  description: Portfolio of Robine — graphic design, motion design and photography from Basel.
+
+nav:
+  menu: Menu
+  close: Close
+  available: Available for projects
+
+menu:
+  search_placeholder: Search projects…
+  results: results
+  nothing: Nothing found.
+  theme_dark: Dark
+  theme_light: Light
+  toggle_theme: Toggle theme
+
+footer:
+  location: Basel · Switzerland
+  rights: All rights reserved.
+  license_prefix: Images
+  license_text: This work is licensed under
+  back_to_overview: ← back to overview
+  next_series: Next series
+  next_project: Next project
+
+lang:
+  de: German
+  en: English
+
+error:
+  not_found_title: Page not found
+  not_found_sub: This page doesn't exist (anymore).
+  title: Something went wrong
+  sub: An unexpected error occurred.
+  home: back home

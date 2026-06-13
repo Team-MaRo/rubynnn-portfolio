@@ -1,0 +1,874 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sponte — a quieter way to be free for friends</title>
+<meta name="description" content="A concept app for the casual drop-by. Leave the porch light on for your circle." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Manrope:wght@400;500;600;700&family=Familjen+Grotesk:wght@400;500;600;700&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #f1ede4;
+    --bg-deep: #ebe5d6;
+    --card: #fbf8f1;
+    --text: #2a2018;
+    --text-soft: #4a3a2c;
+    --muted: #80715f;
+    --rule: rgba(40, 30, 20, 0.10);
+    --rule-soft: rgba(40, 30, 20, 0.06);
+    --accent: #C25F3D;
+    --accent-warm: #D97757;
+    --accent-glow: #f3c870;
+  }
+  html { scroll-behavior: smooth; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg); color: var(--text);
+    font-family: 'Manrope', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  ::selection { background: var(--accent-glow); color: var(--text); }
+
+  /* ─── Layout ─────────────────────────────────────────── */
+  .page { max-width: 1180px; margin: 0 auto; padding: 0 32px; }
+  .narrow { max-width: 680px; margin-left: auto; margin-right: auto; }
+  .wide   { max-width: 1100px; margin-left: auto; margin-right: auto; }
+
+  section.block { padding: 96px 0; border-top: 0.5px solid var(--rule); }
+  section.block:first-of-type { border-top: none; }
+
+  /* ─── Top bar ────────────────────────────────────────── */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(241, 237, 228, 0.85);
+    backdrop-filter: saturate(140%) blur(12px);
+    -webkit-backdrop-filter: saturate(140%) blur(12px);
+    border-bottom: 0.5px solid var(--rule);
+  }
+  .topbar-inner {
+    max-width: 1180px; margin: 0 auto; padding: 14px 32px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .brand {
+    display: flex; align-items: center; gap: 10px;
+    font-family: 'Newsreader', serif; font-weight: 500;
+    font-size: 18px; letter-spacing: -0.3px;
+    text-decoration: none; color: var(--text);
+  }
+  .brand-dot {
+    width: 22px; height: 26px; position: relative;
+    background: radial-gradient(ellipse at 50% 60%, var(--accent-glow) 0%, transparent 65%);
+  }
+  .brand-dot::after {
+    content: ''; position: absolute; left: 50%; top: 4px;
+    transform: translateX(-50%); width: 10px; height: 14px;
+    border: 1.2px solid var(--text); border-radius: 2px;
+    background: linear-gradient(180deg, transparent 0, transparent 50%, rgba(243,200,112,0.6) 50%);
+  }
+  .topnav { display: flex; gap: 22px; margin-left: auto; }
+  .topnav a {
+    font-size: 12px; font-weight: 600; color: var(--muted);
+    text-decoration: none; letter-spacing: 0.2px;
+  }
+  .topnav a:hover { color: var(--accent); }
+
+  /* ─── Hero ───────────────────────────────────────────── */
+  .hero { padding: 88px 0 56px; }
+  .eyebrow {
+    font-size: 12px; font-weight: 700; letter-spacing: 1.4px;
+    text-transform: uppercase; color: var(--accent);
+  }
+  h1.title {
+    font-family: 'Newsreader', serif; font-weight: 400;
+    font-size: clamp(48px, 7vw, 84px); line-height: 1.02;
+    letter-spacing: -1.4px; margin: 18px 0 14px;
+    text-wrap: balance;
+  }
+  h1.title em {
+    font-style: italic; color: var(--accent);
+    font-weight: 500;
+  }
+  .lede {
+    font-family: 'Newsreader', serif; font-weight: 400;
+    font-size: 22px; line-height: 1.45; color: var(--text-soft);
+    max-width: 620px; margin-top: 6px;
+    text-wrap: pretty;
+  }
+  .meta-row {
+    display: flex; flex-wrap: wrap; gap: 36px;
+    margin-top: 44px; padding-top: 24px;
+    border-top: 0.5px solid var(--rule);
+  }
+  .meta-row dt {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.2px; color: var(--muted); margin: 0 0 6px;
+  }
+  .meta-row dd {
+    margin: 0; font-size: 15px; font-weight: 600; color: var(--text);
+  }
+  .meta-row dd a { color: var(--accent); text-decoration: none; }
+  .meta-row dd a:hover { text-decoration: underline; }
+  .meta-cell { min-width: 140px; }
+
+  /* ─── Hero stage — phone trio ──────────────────────── */
+  .hero-stage {
+    margin-top: 64px;
+    display: flex; justify-content: center; align-items: flex-end;
+    gap: 28px; padding: 56px 0 0;
+    position: relative;
+  }
+  .hero-stage::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 60%, rgba(243,200,112,0.35) 0%, transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
+  .hero-phone { position: relative; z-index: 1; }
+  .hero-phone.side { opacity: 0.92; }
+  @media (max-width: 720px) {
+    .hero-stage { gap: 12px; padding-top: 24px; }
+    .hero-stage .side { display: none; }
+  }
+
+  /* ─── Type ───────────────────────────────────────────── */
+  h2.section-title {
+    font-family: 'Newsreader', serif; font-weight: 400;
+    font-size: clamp(34px, 4.4vw, 52px); line-height: 1.05;
+    letter-spacing: -0.9px; margin: 0 0 18px;
+    text-wrap: balance;
+  }
+  h2.section-title em { font-style: italic; color: var(--accent); font-weight: 500; }
+  h3.kicker {
+    font-family: 'Manrope', sans-serif; font-weight: 700;
+    font-size: 11px; letter-spacing: 1.6px; text-transform: uppercase;
+    color: var(--accent); margin: 0 0 14px;
+  }
+  p { font-size: 17px; line-height: 1.62; color: var(--text-soft); margin: 0 0 18px; text-wrap: pretty; }
+  p strong { color: var(--text); font-weight: 700; }
+  p em { font-style: italic; color: var(--text); }
+  .pull {
+    font-family: 'Newsreader', serif; font-style: italic; font-weight: 400;
+    font-size: 28px; line-height: 1.35; color: var(--text);
+    border-left: 2px solid var(--accent); padding: 6px 0 6px 22px;
+    margin: 32px 0; text-wrap: balance;
+  }
+  .scrawl {
+    font-family: 'Caveat', cursive; font-weight: 500;
+    color: var(--accent); font-size: 22px; line-height: 1;
+    display: inline-block; transform: rotate(-2deg);
+  }
+  .caption {
+    font-size: 12px; color: var(--muted); letter-spacing: 0.2px;
+    margin-top: 14px; text-align: center;
+    font-family: 'Manrope', sans-serif;
+  }
+  .caption em { font-style: italic; color: var(--accent); }
+
+  /* ─── Two-col & grids ───────────────────────────────── */
+  .two-col {
+    display: grid; grid-template-columns: 1fr 1.1fr;
+    gap: 64px; align-items: center;
+  }
+  .two-col.reverse { grid-template-columns: 1.1fr 1fr; }
+  @media (max-width: 900px) {
+    .two-col, .two-col.reverse { grid-template-columns: 1fr; gap: 36px; }
+  }
+
+  .mock-stage {
+    background: var(--bg-deep);
+    border-radius: 24px; padding: 56px 32px;
+    display: flex; justify-content: center; align-items: center;
+    border: 0.5px solid var(--rule);
+    position: relative; overflow: hidden;
+  }
+  .mock-stage.warm::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 30%, rgba(243,200,112,0.32) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .mock-stage > * { position: relative; }
+
+  .triptych {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+    margin-top: 36px;
+  }
+  @media (max-width: 880px) {
+    .triptych { grid-template-columns: 1fr; }
+  }
+  .tile {
+    background: var(--card); border: 0.5px solid var(--rule);
+    border-radius: 18px; padding: 24px 22px 22px;
+    display: flex; flex-direction: column; gap: 14px;
+    min-height: 220px;
+  }
+  .tile .n {
+    font-family: 'Newsreader', serif; font-style: italic;
+    color: var(--accent); font-size: 14px;
+  }
+  .tile h4 {
+    font-family: 'Newsreader', serif; font-weight: 500;
+    font-size: 22px; letter-spacing: -0.3px; margin: 0;
+    line-height: 1.15;
+  }
+  .tile p { font-size: 14px; line-height: 1.55; margin: 0; }
+
+  .cross-grid {
+    display: grid; grid-template-columns: auto auto auto;
+    gap: 28px; justify-content: center; align-items: flex-end;
+    margin-top: 12px;
+  }
+  @media (max-width: 1000px) {
+    .cross-grid { grid-template-columns: 1fr; justify-items: center; }
+  }
+  .cross-cell { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .cross-cell .lbl {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1.4px; color: var(--muted);
+  }
+
+  /* ─── Palette swatches ──────────────────────────────── */
+  .palette {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 12px; margin-top: 28px;
+  }
+  .sw {
+    aspect-ratio: 4 / 5; border-radius: 14px;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 14px; box-sizing: border-box;
+    border: 0.5px solid var(--rule);
+    font-size: 11px; color: var(--text);
+    position: relative; overflow: hidden;
+  }
+  .sw .hex { font-weight: 700; font-family: 'Manrope', sans-serif; letter-spacing: 0.3px; }
+  .sw .nm { color: var(--muted); margin-top: 2px; }
+  .sw.dark .hex, .sw.dark .nm { color: rgba(247,243,232,0.92); }
+  .sw.dark .nm { color: rgba(247,243,232,0.6); }
+  @media (max-width: 700px) { .palette { grid-template-columns: repeat(3, 1fr); } }
+
+  /* ─── Type spec ─────────────────────────────────────── */
+  .type-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 24px;
+    margin-top: 28px;
+  }
+  .type-card {
+    background: var(--card); border: 0.5px solid var(--rule);
+    border-radius: 16px; padding: 28px;
+  }
+  .type-card .label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: var(--muted); }
+  .type-card .name { font-size: 14px; font-weight: 700; color: var(--text); margin-top: 4px; }
+  .type-card .sample { margin-top: 18px; line-height: 1; }
+  .type-card.serif .sample { font-family: 'Newsreader', serif; font-size: 52px; font-weight: 400; letter-spacing: -0.6px; }
+  .type-card.serif .sample em { font-style: italic; color: var(--accent); }
+  .type-card.sans .sample { font-family: 'Manrope', sans-serif; font-size: 30px; font-weight: 600; letter-spacing: -0.4px; }
+  @media (max-width: 700px) { .type-grid { grid-template-columns: 1fr; } }
+
+  /* ─── Variants stack ────────────────────────────────── */
+  .variants {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 20px; margin-top: 32px;
+  }
+  @media (max-width: 900px) { .variants { grid-template-columns: 1fr; } }
+  .vt {
+    background: var(--card); border: 0.5px solid var(--rule);
+    border-radius: 18px; padding: 22px 22px 24px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .vt .vt-head {
+    display: flex; align-items: baseline; justify-content: space-between;
+  }
+  .vt h4 {
+    font-family: 'Newsreader', serif; font-weight: 500;
+    font-size: 22px; margin: 0; letter-spacing: -0.3px;
+  }
+  .vt .badge {
+    font-size: 10px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; color: var(--accent);
+  }
+  .vt p { font-size: 13px; line-height: 1.55; margin: 0; color: var(--muted); }
+  .vt .vt-mock {
+    margin: 6px -6px 0; border-radius: 12px;
+    background: var(--bg-deep); padding: 16px;
+    display: flex; justify-content: center; align-items: center;
+    min-height: 220px;
+    overflow: hidden;
+  }
+
+  /* ─── Closing bar ────────────────────────────────────── */
+  .closing {
+    background: var(--text); color: rgba(247,243,232,0.94);
+    border-radius: 28px; padding: 64px 56px;
+    margin-top: 64px; position: relative; overflow: hidden;
+  }
+  .closing::before {
+    content: ''; position: absolute; right: -120px; top: -120px;
+    width: 380px; height: 380px;
+    background: radial-gradient(circle, rgba(243,200,112,0.45) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .closing h2 {
+    font-family: 'Newsreader', serif; font-weight: 400;
+    font-size: clamp(32px, 4vw, 48px); line-height: 1.05; letter-spacing: -0.6px;
+    margin: 0 0 14px; color: #f7f3e8; max-width: 18ch;
+    text-wrap: balance;
+  }
+  .closing h2 em { font-style: italic; color: var(--accent-glow); font-weight: 500; }
+  .closing p {
+    color: rgba(247,243,232,0.78);
+    font-size: 16px; line-height: 1.6; max-width: 56ch;
+    margin-bottom: 24px;
+  }
+  .ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; position: relative; }
+  .cta {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 14px 22px; border-radius: 999px;
+    font-weight: 700; font-size: 14px; text-decoration: none;
+    border: 1px solid rgba(247,243,232,0.18);
+    color: rgba(247,243,232,0.94);
+    background: transparent; transition: background .15s;
+  }
+  .cta.primary {
+    background: var(--accent-warm); color: #2a2018;
+    border-color: transparent;
+  }
+  .cta:hover { background: rgba(247,243,232,0.08); }
+  .cta.primary:hover { background: var(--accent-glow); }
+
+  /* ─── Footer ─────────────────────────────────────────── */
+  footer {
+    padding: 56px 0 80px;
+    color: var(--muted); font-size: 12px;
+    display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+    border-top: 0.5px solid var(--rule); margin-top: 64px;
+  }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+
+  /* ─── Mockup wrappers ────────────────────────────────── */
+  .phone-wrap, .tab-wrap, .web-wrap, .watch-wrap, .widgets-wrap {
+    position: relative; overflow: hidden;
+    border-radius: 18px;
+    background: transparent;
+  }
+  .phone-wrap[data-scale="0.55"] { width: 221px; height: 481px; }
+  .phone-wrap[data-scale="0.62"] { width: 249px; height: 542px; }
+  .phone-wrap[data-scale="0.50"] { width: 201px; height: 437px; }
+  .tab-wrap   { width: 461px; height: 346px; }
+  .web-wrap   { width: 540px; height: 369px; }
+  .watch-wrap { width: 240px; height: 280px; }
+
+  /* small section ornament */
+  .ornament {
+    display: flex; align-items: center; gap: 14px;
+    margin: 0 auto 36px; max-width: 240px;
+    color: var(--accent);
+  }
+  .ornament::before, .ornament::after {
+    content: ''; flex: 1; height: 1px; background: var(--rule);
+  }
+  .ornament svg { display: block; }
+
+  /* anchor offsets for sticky nav */
+  section.block { scroll-margin-top: 80px; }
+</style>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <a class="brand" href="#top">
+      <span class="brand-dot"></span>
+      <span>Sponte · <em style="font-style:italic;color:var(--accent)">case&nbsp;study</em></span>
+    </a>
+    <nav class="topnav">
+      <a href="#premise">Premise</a>
+      <a href="#concept">Concept</a>
+      <a href="#magic">Magic moment</a>
+      <a href="#cross">Cross-platform</a>
+      <a href="#ambient">Ambient</a>
+      <a href="#system">System</a>
+      <a href="#reflection">Reflection</a>
+    </nav>
+  </div>
+</div>
+
+<div class="page" id="top">
+
+  <!-- ─── Hero ─────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="narrow" style="margin-left:0">
+      <div class="eyebrow">Concept · iOS, Android, iPadOS, Web · 2025</div>
+      <h1 class="title">A quieter way to be <em>free for friends.</em></h1>
+      <p class="lede">
+        Sponte is a concept app for the casual drop-by. Light a lantern when you're around — your circle sees the porch is on, and the people who care to swing by, do.
+      </p>
+    </div>
+
+    <dl class="meta-row">
+      <div class="meta-cell">
+        <dt>Role</dt>
+        <dd>Solo · concept, design, prototype</dd>
+      </div>
+      <div class="meta-cell">
+        <dt>Surfaces</dt>
+        <dd>iOS · Android · iPad · Web · Watch</dd>
+      </div>
+      <div class="meta-cell">
+        <dt>Scope</dt>
+        <dd>15 sections · ~70 screens</dd>
+      </div>
+      <div class="meta-cell">
+        <dt>Live</dt>
+        <dd><a href="Sponte.html">Open the full canvas →</a></dd>
+      </div>
+    </dl>
+
+    <!-- Hero stage: three phones, lit lantern centre -->
+    <div class="hero-stage">
+      <div class="hero-phone side"><div class="phone-wrap" data-scale="0.50" data-mock="home-unlit" data-platform="ios"></div></div>
+      <div class="hero-phone"><div class="phone-wrap" data-scale="0.62" data-mock="home-lit" data-platform="ios"></div></div>
+      <div class="hero-phone side"><div class="phone-wrap" data-scale="0.50" data-mock="friends" data-platform="android"></div></div>
+    </div>
+    <div class="caption">Three states of one screen — <em>unlit, lit,</em> and <em>who's free</em>.</div>
+  </section>
+
+  <!-- ─── Premise ──────────────────────────────────────── -->
+  <section class="block" id="premise">
+    <div class="narrow">
+      <h3 class="kicker">01 · The premise</h3>
+      <h2 class="section-title">Adult friendships die by <em>scheduling.</em></h2>
+      <p>
+        Most of the people we love most live within thirty minutes of us. We see them less than we'd like — not because we're busy, but because seeing them takes a calendar, two reschedules, and a restaurant booking. The threshold is too high for "I'd just like to sit with you."
+      </p>
+      <p>
+        Sponte makes <em>"I'm around if anyone wants to swing by"</em> a single tap. No invitations. No replies expected. No event. Just a lantern in the window, on or off, for the people you already trust.
+      </p>
+
+      <div class="pull">
+        Calendars are for strangers. Friends should know where the porch light is.
+      </div>
+
+      <p>
+        Everything in the app comes back to one decision: <strong>is your lantern lit, and for whom?</strong> The product is the answer to that question, surfaced wherever you happen to look — your phone, your wrist, your home screen, your laptop.
+      </p>
+    </div>
+  </section>
+
+  <!-- ─── Concept / lantern metaphor ──────────────────── -->
+  <section class="block" id="concept">
+    <div class="wide">
+      <h3 class="kicker" style="text-align:center">02 · The metaphor</h3>
+      <h2 class="section-title" style="text-align:center">A lantern, not a <em>status.</em></h2>
+      <p class="narrow" style="text-align:center">
+        "Free now / busy / DND" reads like a slack indicator. A lantern reads like a place. Concrete, warm, already understood. Every interaction in the app is a thing you can do to a lantern — light it, dim it, leave it on a timer, let the right people see it.
+      </p>
+
+      <div class="triptych">
+        <div class="tile">
+          <div class="n">i.</div>
+          <h4>Lit, dim, or on a timer.</h4>
+          <p>Tap to light. The lantern stays on until a time you set — 30 min, an hour, until dinner. You don't have to remember to dim it; it ages out on its own.</p>
+        </div>
+        <div class="tile">
+          <div class="n">ii.</div>
+          <h4>For a circle, not the public.</h4>
+          <p>Only people you've added can see your lantern. Within that, you choose: everyone, a group, or specific names. Privacy is the default, not a setting.</p>
+        </div>
+        <div class="tile">
+          <div class="n">iii.</div>
+          <h4>With an optional ask.</h4>
+          <p>"Bring something" and "mood" are tiny add-ons — a bottle of wine, a book to read in the same room. They're optional because most lanterns don't need them.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Magic moment ─────────────────────────────────── -->
+  <section class="block" id="magic">
+    <div class="two-col">
+      <div>
+        <h3 class="kicker">03 · The magic moment</h3>
+        <h2 class="section-title">One sheet. <em>Light the lantern.</em></h2>
+        <p>
+          The hardest design decision was resisting a wizard. Audience, duration, mood, "bring something" — every one of these could justify its own screen. None of them earn one. They live as a single sheet that opens from the home tab, defaults you can ignore, and ships in one swipe.
+        </p>
+        <p>
+          The fast path is two taps: <strong>light → done.</strong> Everything else is there if you want it, invisible if you don't. <span class="scrawl">defaults do the work →</span>
+        </p>
+      </div>
+      <div class="mock-stage warm">
+        <div class="phone-wrap" data-scale="0.62" data-mock="sheet" data-platform="ios"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Variants ─────────────────────────────────────── -->
+  <section class="block">
+    <div class="wide">
+      <h3 class="kicker">04 · Variant exploration</h3>
+      <h2 class="section-title">Three ways to <em>set the time.</em></h2>
+      <p class="narrow">
+        Duration is the one input you'll touch every time. I prototyped three. Each is honest about a different posture: pick a preset, sweep to a feeling, or commit to a precise hour. The dial shipped as default; chips and slider stay as adjustable settings for users who reach for them.
+      </p>
+
+      <div class="variants">
+        <div class="vt">
+          <div class="vt-head">
+            <h4>Chips</h4>
+            <span class="badge">Fastest</span>
+          </div>
+          <div class="vt-mock">
+            <div class="phone-wrap" data-scale="0.55" data-mock="sheet-chips" data-platform="ios"></div>
+          </div>
+          <p>Five presets — 30m, 1h, 2h, "til 6", "tonight." Zero precision, total speed. Best when you've barely thought about it.</p>
+        </div>
+        <div class="vt">
+          <div class="vt-head">
+            <h4>Dial</h4>
+            <span class="badge">Default</span>
+          </div>
+          <div class="vt-mock">
+            <div class="phone-wrap" data-scale="0.55" data-mock="sheet-dial" data-platform="ios"></div>
+          </div>
+          <p>A radial dial that snaps to the next quarter-hour. Feels like setting an alarm clock — a deliberate, calming gesture that matches the lantern itself.</p>
+        </div>
+        <div class="vt">
+          <div class="vt-head">
+            <h4>Slider</h4>
+            <span class="badge">Precise</span>
+          </div>
+          <div class="vt-mock">
+            <div class="phone-wrap" data-scale="0.55" data-mock="sheet-slider" data-platform="ios"></div>
+          </div>
+          <p>A horizontal sweep from "now" to "tonight." Continuous and analog. Best for people who think of time as a feeling rather than a clock.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Cross-platform ────────────────────────────────── -->
+  <section class="block" id="cross">
+    <div class="wide">
+      <h3 class="kicker" style="text-align:center">05 · Range</h3>
+      <h2 class="section-title" style="text-align:center">Same lantern, <em>every surface.</em></h2>
+      <p class="narrow" style="text-align:center">
+        A circle isn't on one device. Some people live in a browser; some never leave the wrist. The same home state — your lantern, your friends' lanterns — renders cleanly on phone, tablet, and web, with each surface earning the space it gets.
+      </p>
+
+      <div class="cross-grid">
+        <div class="cross-cell">
+          <div class="phone-wrap" data-scale="0.55" data-mock="home-lit" data-platform="ios"></div>
+          <div class="lbl">iOS · phone</div>
+        </div>
+        <div class="cross-cell">
+          <div class="tab-wrap" data-mock="home-lit-tablet"></div>
+          <div class="lbl">iPadOS · tablet</div>
+        </div>
+        <div class="cross-cell">
+          <div class="web-wrap" data-mock="home-lit-web"></div>
+          <div class="lbl">Web · desktop</div>
+        </div>
+      </div>
+      <div class="caption">Sidebar nav on web, single column on phone, two-column reading on iPad — same data, three densities.</div>
+    </div>
+  </section>
+
+  <!-- ─── Ambient ────────────────────────────────────── -->
+  <section class="block" id="ambient">
+    <div class="two-col reverse">
+      <div class="mock-stage warm" style="flex-direction:column;gap:18px;flex-wrap:wrap;display:flex;">
+        <div class="watch-wrap" data-mock="watch"></div>
+      </div>
+      <div>
+        <h3 class="kicker">06 · Ambient surfaces</h3>
+        <h2 class="section-title">Out of the way, <em>still on.</em></h2>
+        <p>
+          A lantern is something you glance at. It doesn't deserve a notification every time someone's around. Sponte lives where glances already happen — a Live Activity on the lock screen, a Watch complication on your wrist, a home-screen widget you scan on the way out the door.
+        </p>
+        <p>
+          Open the app to <em>change</em> your state. The rest of the time, your state changes you — a soft warm glow on whatever you happen to be looking at.
+        </p>
+        <p>
+          <span class="scrawl">a status, not an inbox →</span>
+        </p>
+      </div>
+    </div>
+
+    <div class="triptych" style="margin-top:48px">
+      <div class="tile" style="align-items:center;text-align:center;padding-bottom:28px">
+        <h4>Live Activity</h4>
+        <div style="margin:8px 0">
+          <div class="phone-wrap" data-scale="0.50" data-mock="live" data-platform="ios" style="margin:0 auto"></div>
+        </div>
+        <p>The lantern lives on the lock screen for as long as it's lit. Tap to dim without unlocking.</p>
+      </div>
+      <div class="tile" style="align-items:center;text-align:center;padding-bottom:28px">
+        <h4>Apple Watch</h4>
+        <div style="margin:8px 0">
+          <div class="watch-wrap" data-mock="watch-menu" style="margin:0 auto;width:200px;height:230px"></div>
+        </div>
+        <p>Glance at who's free. Light your own lantern from the wrist in two taps.</p>
+      </div>
+      <div class="tile" style="align-items:center;text-align:center;padding-bottom:28px">
+        <h4>Home-screen widgets</h4>
+        <div style="margin:8px 0">
+          <div class="tab-wrap" data-mock="widgets-tablet" style="margin:0 auto;width:300px;height:225px"></div>
+        </div>
+        <p>Small, medium, large. Tap the widget and the magic moment opens straight into it.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── System ────────────────────────────────────────── -->
+  <section class="block" id="system">
+    <div class="wide">
+      <h3 class="kicker">07 · Visual system</h3>
+      <h2 class="section-title">Cream, coral, <em>candlelight.</em></h2>
+      <p class="narrow">
+        The palette is a porch at dusk. Warm cream as paper, charcoal as ink, coral as the lantern, honey as the glow. Greys are tinted toward brown so nothing feels like a spreadsheet. A serif (Newsreader) carries the brand voice; a humanist sans (Manrope) carries the interface; a handwritten accent (Caveat) shows up as marginalia.
+      </p>
+
+      <div class="palette">
+        <div class="sw" style="background:#f1ede4"><span class="hex">#F1EDE4</span><span class="nm">Paper</span></div>
+        <div class="sw" style="background:#fbf8f1"><span class="hex">#FBF8F1</span><span class="nm">Surface</span></div>
+        <div class="sw" style="background:#C25F3D;color:#fff7e8" class="dark"><span class="hex" style="color:#fff7e8">#C25F3D</span><span class="nm" style="color:rgba(255,247,232,0.7)">Lantern</span></div>
+        <div class="sw" style="background:#f3c870"><span class="hex">#F3C870</span><span class="nm">Glow</span></div>
+        <div class="sw dark" style="background:#2a2018;color:#f7f3e8"><span class="hex">#2A2018</span><span class="nm">Ink</span></div>
+      </div>
+
+      <div class="type-grid">
+        <div class="type-card serif">
+          <div class="label">Display</div>
+          <div class="name">Newsreader · regular & italic</div>
+          <div class="sample">Lit until <em>4:30</em></div>
+        </div>
+        <div class="type-card sans">
+          <div class="label">Interface</div>
+          <div class="name">Manrope · 500 / 700</div>
+          <div class="sample">Who's free tonight</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Reflection ────────────────────────────────────── -->
+  <section class="block" id="reflection">
+    <div class="narrow">
+      <h3 class="kicker">08 · Reflection</h3>
+      <h2 class="section-title">What I'd <em>test next.</em></h2>
+      <p>
+        <strong>The default duration.</strong> A dial that lands on 1h feels right to me; data might say 30m is the honest number. The first version I'd ship instruments this hard.
+      </p>
+      <p>
+        <strong>The receiving side.</strong> I designed for the lighter more than the seer. I'd next prototype the "who's free" surface as a separate ambient widget — maybe a tiny constellation of lit windows on the home screen — and see if people open the app less.
+      </p>
+      <p>
+        <strong>The first lantern.</strong> Onboarding has a real ceiling: there's no value until someone in your contacts is also on Sponte. The current design leans into the "invite a friend, light a lantern together" loop. Whether that loop is strong enough is the only question that matters before launch.
+      </p>
+    </div>
+
+    <div class="narrow closing">
+      <h2>Take a longer look — open the <em>full canvas.</em></h2>
+      <p>Every screen, every state, every platform — pannable on one canvas. Toggle dark mode, swap time pickers, focus a single section. The same prototype I designed against.</p>
+      <div class="ctas">
+        <a class="cta primary" href="Sponte.html">Open the canvas →</a>
+        <a class="cta" href="sections/index.html">Browse by section</a>
+        <a class="cta" href="sections/magic.html">Jump to the magic moment</a>
+      </div>
+    </div>
+
+    <footer>
+      <div>© 2025 · Sponte is a concept project. Not affiliated with any product.</div>
+      <div><a href="Sponte.html">Live prototype</a> · <a href="sections/index.html">Section pages</a></div>
+    </footer>
+  </section>
+</div>
+
+<!-- ─── React components used inline ────────────────────── -->
+<script type="text/babel" src="ios-frame.jsx"></script>
+<script type="text/babel" src="android-frame.jsx"></script>
+<script type="text/babel" src="browser-window.jsx"></script>
+<script type="text/babel" src="screens.jsx"></script>
+<script type="text/babel" src="screens2.jsx"></script>
+<script type="text/babel" src="screens3.jsx"></script>
+<script type="text/babel" src="screens4.jsx"></script>
+<script type="text/babel" src="screens5.jsx"></script>
+<script type="text/babel" src="screens6.jsx"></script>
+<script type="text/babel" src="screens7.jsx"></script>
+<script src="search-bar.js"></script>
+
+<script type="text/babel">
+/* ─────────────────────────────────────────────────────────────
+   Inline mockup renderer
+   Finds [data-mock] elements and mounts the matching screen
+   inside the right device frame, at the requested scale.
+   ───────────────────────────────────────────────────────────── */
+
+const T = THEMES.A;
+const isDark = false;
+
+function Shell({ children }) {
+  return <ThemeShell theme={T} dark={isDark}>{children}</ThemeShell>;
+}
+
+// ─── Phone mockup
+function PhoneMock({ scale = 0.55, platform = 'ios', kind }) {
+  const W = platform === 'ios' ? 402 : 412;
+  const H = platform === 'ios' ? 874 : 892;
+  const Device = platform === 'ios' ? IOSDevice : AndroidDevice;
+
+  let Screen, props = { platform, showMascot: true, timePicker: 'dial', view: 'list' };
+  switch (kind) {
+    case 'home-unlit':    Screen = HomeUnlitScreen; break;
+    case 'home-lit':      Screen = HomeWithSwitcher; props.mode = 'home'; break;
+    case 'friends':       Screen = HomeWithSwitcher; props.mode = 'friends'; break;
+    case 'sheet':         Screen = HomeWithSwitcher; props.mode = 'home'; props.showSheet = true; break;
+    case 'sheet-chips':   Screen = HomeWithSwitcher; props.mode = 'home'; props.showSheet = true; props.timePicker = 'chips'; break;
+    case 'sheet-dial':    Screen = HomeWithSwitcher; props.mode = 'home'; props.showSheet = true; props.timePicker = 'dial'; break;
+    case 'sheet-slider':  Screen = HomeWithSwitcher; props.mode = 'home'; props.showSheet = true; props.timePicker = 'slider'; break;
+    case 'mood':          Screen = MoodScreen; break;
+    case 'live':          Screen = LiveActivityScreen; break;
+    case 'profile':       Screen = FriendProfileScreen; break;
+    case 'login':         Screen = LoginScreen; break;
+    default:              Screen = HomeWithSwitcher; props.mode = 'home';
+  }
+
+  return (
+    <div style={{
+      width: W * scale, height: H * scale,
+      position: 'relative', overflow: 'hidden',
+    }}>
+      <div style={{
+        position: 'absolute', top: 0, left: 0,
+        width: W, height: H,
+        transform: `scale(${scale})`, transformOrigin: 'top left',
+      }}>
+        <Shell>
+          <Device width={W} height={H} dark={isDark}>
+            <Screen {...props} />
+          </Device>
+        </Shell>
+      </div>
+    </div>
+  );
+}
+
+// ─── Tablet mockup (iPad landscape)
+function TabletMock({ kind, scale = 0.45 }) {
+  const W = 1024, H = 768;
+  const cardW = Math.round(W * scale), cardH = Math.round(H * scale);
+
+  let WebComp;
+  switch (kind) {
+    case 'home-lit-tablet': WebComp = HomeWeb; break;
+    case 'widgets-tablet':  WebComp = WidgetsScreenTablet; break;
+    case 'friends-tablet':  WebComp = FriendsWeb; break;
+    default:                WebComp = HomeWeb;
+  }
+
+  // Widgets tablet renders a full home screen, not in a tablet bezel —
+  // include the bezel so it reads "device" not "app."
+  return (
+    <div style={{
+      width: cardW, height: cardH, position: 'relative', overflow: 'hidden',
+      background: '#0a0604', padding: 6, boxSizing: 'border-box', borderRadius: 18,
+    }}>
+      <div style={{
+        position: 'absolute', top: 0, left: 0, width: W, height: H,
+        transform: `scale(${scale})`, transformOrigin: 'top left',
+        padding: 14, boxSizing: 'border-box',
+      }}>
+        <div style={{
+          width: '100%', height: '100%', position: 'relative',
+          borderRadius: 22, overflow: 'hidden', background: '#0e0a04',
+        }}>
+          <div style={{ position: 'absolute', top: 8, left: '50%', transform: 'translateX(-50%)',
+            width: 6, height: 6, borderRadius: 4, background: '#1c1c1c', zIndex: 5 }} />
+          <div style={{ width: '100%', height: '100%', overflow: 'hidden' }}>
+            <Shell><WebComp /></Shell>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Web mockup (browser chrome + sidebar app)
+function WebMock({ kind, scale = 0.45 }) {
+  const W = 1200, H = 820;
+  let WebComp;
+  switch (kind) {
+    case 'home-lit-web':  WebComp = HomeWeb; break;
+    case 'friends-web':   WebComp = FriendsWeb; break;
+    case 'sheet-web':     WebComp = LanternSheetWeb; break;
+    case 'marketing':     WebComp = MarketingLandingPage; break;
+    default:              WebComp = HomeWeb;
+  }
+  return (
+    <div style={{
+      width: W * scale, height: H * scale,
+      position: 'relative', overflow: 'hidden',
+      borderRadius: 12, background: '#202124',
+    }}>
+      <div style={{
+        position: 'absolute', top: 0, left: 0, width: W, height: H,
+        transform: `scale(${scale})`, transformOrigin: 'top left',
+      }}>
+        <ChromeWindow width={W} height={H} url="sponte.so/app" tabs={[{ title: 'Sponte' }]} activeIndex={0}>
+          <Shell><WebComp /></Shell>
+        </ChromeWindow>
+      </div>
+    </div>
+  );
+}
+
+// ─── Watch mockup (no bezel needed — WatchScreen draws its own)
+function WatchMock({ kind = 'watch', scale = 1 }) {
+  let Screen = WatchScreen;
+  if (kind === 'watch-menu') Screen = WatchLanternMenu;
+  return (
+    <div style={{
+      width: 220 * scale, height: 260 * scale,
+      display: 'flex', alignItems: 'center', justifyContent: 'center',
+    }}>
+      <Shell>
+        <Screen platform="ios" />
+      </Shell>
+    </div>
+  );
+}
+
+/* Boot — find each [data-mock] node and mount the appropriate root */
+function mountAll() {
+  document.querySelectorAll('[data-mock]').forEach(node => {
+    const kind = node.getAttribute('data-mock');
+    const platform = node.getAttribute('data-platform') || 'ios';
+    const scale = parseFloat(node.getAttribute('data-scale') || '0.55');
+
+    let el;
+    if (kind.startsWith('watch')) {
+      el = <WatchMock kind={kind} scale={kind === 'watch' ? 1 : 0.85} />;
+    } else if (kind.endsWith('-tablet')) {
+      el = <TabletMock kind={kind} scale={kind === 'widgets-tablet' ? 0.30 : 0.45} />;
+    } else if (kind.endsWith('-web')) {
+      el = <WebMock kind={kind} scale={0.45} />;
+    } else {
+      el = <PhoneMock kind={kind} platform={platform} scale={scale} />;
+    }
+    ReactDOM.createRoot(node).render(el);
+  });
+}
+
+// Wait a tick so all babel scripts finish.
+setTimeout(mountAll, 60);
+</script>
+
+</body>
+</html>

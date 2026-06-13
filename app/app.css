@@ -1,0 +1,284 @@
+@import "tailwindcss";
+
+/* ── Non-colour theme tokens ──────────────────────────────────────────────
+   Fonts mirror the Google Fonts <link> in root.tsx. The design is editorial:
+   Fraunces (display, italic-forward), Inter (body), Space Mono (UI labels). */
+@theme {
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-display: "Fraunces", "Times New Roman", serif;
+  --font-mono: "Space Mono", ui-monospace, monospace;
+
+  --text-2xs: 0.625rem; /* 10px UI labels */
+  --container-max: 1500px;
+
+  --default-transition-duration: 250ms;
+
+  /* Animation registrations so the `animate-*` utilities exist. */
+  --animate-marquee: marquee 36s linear infinite;
+  --animate-blob: blob 14s ease-in-out infinite;
+  --animate-spin-slow: spin 38s linear infinite;
+  --animate-spin-slower: spin 60s linear infinite reverse;
+  --animate-float: float 9s ease-in-out infinite;
+  --animate-pulse-dot: pulse-dot 2s ease-in-out infinite;
+  --animate-orbit: orbit 12s linear infinite;
+}
+
+/* ── Colour tokens ────────────────────────────────────────────────────────
+   `@theme inline` so Tailwind inlines the var() reference directly into
+   utilities (`.bg-bg { background: var(--bg); }`); the runtime light/dark
+   cascade below then re-themes every utility at once. */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-paper: var(--paper);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+}
+
+/* Runtime tokens — light (default, editorial "warm cream" palette). */
+:root {
+  --theme-transition: 250ms;
+  --bg: #f4f1ec;
+  --paper: #faf7f1;
+  --fg: #1a1a1a;
+  --muted: rgba(26, 26, 26, 0.55);
+  --faint: rgba(26, 26, 26, 0.35);
+  --line: rgba(26, 26, 26, 0.12);
+  --accent: oklch(0.62 0.18 35);
+  --accent-soft: oklch(0.88 0.06 35);
+}
+
+/* Dark cascade. Class set pre-paint by the bootstrap in root.tsx. */
+html.dark {
+  --bg: #14130f;
+  --paper: #1c1a16;
+  --fg: #f0ece2;
+  --muted: rgba(240, 236, 226, 0.55);
+  --faint: rgba(240, 236, 226, 0.35);
+  --line: rgba(240, 236, 226, 0.15);
+  --accent: oklch(0.72 0.15 38);
+  --accent-soft: oklch(0.42 0.08 38);
+}
+
+/* Class-based dark variant (overrides Tailwind's prefers-color-scheme default
+   so `dark:` follows our `html.dark` cascade). */
+@custom-variant dark (&:where(html.dark, html.dark *));
+
+/* `no-js:` — applies when the inline bootstrap hasn't added `.js` to <html>
+   (JS disabled/blocked/failed). Used to hide controls with no meaningful no-JS
+   state and to restore the system cursor. */
+@custom-variant no-js (&:where(html:not(.js), html:not(.js) *));
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    overflow-x: clip;
+    min-height: 100dvh;
+    transition: background-color var(--theme-transition) ease, color var(--theme-transition) ease;
+  }
+
+  img {
+    max-width: 100%;
+    display: block;
+  }
+
+  /* Hide the system cursor only when JS is present (the custom cursor is
+     mounted). No-JS keeps the native cursor. Disabled on touch / coarse
+     pointers via the media query. */
+  @media (pointer: fine) {
+    html.js body.has-custom-cursor {
+      cursor: none;
+    }
+  }
+
+  /* Honor reduced-motion: collapse every animation + transition. 0.01ms (not
+     0s) keeps transitionend/animationend listeners firing. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  /* Reduced transparency: drop all backdrop blur and solidify translucent
+     chrome (nav, menu overlay, lightbox) so content can't bleed through. */
+  @media (prefers-reduced-transparency: reduce) {
+    .glass-nav,
+    .glass-surface {
+      background-color: var(--bg) !important;
+    }
+    *,
+    *::before,
+    *::after {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+    }
+  }
+}
+
+/* ── Reusable surface utilities ───────────────────────────────────────────
+   Frosted nav/menu fills as `@utility` so the reduced-transparency fallback
+   in @layer base can override them. */
+@utility glass-nav {
+  background-color: color-mix(in oklch, var(--bg) 88%, transparent);
+  backdrop-filter: blur(10px);
+}
+@utility glass-surface {
+  background-color: color-mix(in oklch, var(--paper) 92%, transparent);
+  backdrop-filter: blur(14px);
+}
+
+/* CSS-columns masonry "spread" used by the editorial photo template. Width +
+   vertical-offset rhythm reproduces the reference's breathing grid. */
+@utility spread {
+  columns: 3;
+  column-gap: 72px;
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: 16px;
+}
+
+@layer components {
+  /* Custom cursor dot (mix-blend so it inverts over any background). */
+  .cursor-dot {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 14px;
+    height: 14px;
+    background: var(--fg);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 200;
+    mix-blend-mode: difference;
+    transition: width 0.25s, height 0.25s;
+    will-change: transform;
+  }
+  .cursor-dot.is-hover {
+    width: 56px;
+    height: 56px;
+  }
+
+  /* Scroll-reveal: hidden until the IntersectionObserver adds `.is-seen`.
+     Under reduced-motion the blanket above neutralises the transition, and the
+     no-js rule below makes content visible without the observer. */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.is-seen {
+    opacity: 1;
+    transform: none;
+  }
+  html:not(.js) .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ── Editorial photo "spread" (CSS-columns masonry) ───────────────────────
+   The width + vertical-offset rhythm makes the grid breathe like the
+   reference. Aspect-ratio hints size figures while their image loads, then
+   `.is-loaded` releases to the image's natural ratio. */
+@layer components {
+  .spread figure {
+    margin: 0 0 110px;
+    break-inside: avoid;
+    position: relative;
+    width: 100%;
+    cursor: zoom-in;
+  }
+  .spread figure img {
+    width: 100%;
+    height: auto;
+    transition: transform 0.8s ease, opacity 0.4s ease;
+  }
+  .spread figure:hover img {
+    transform: scale(1.012);
+  }
+  .spread figcaption {
+    position: absolute;
+    left: 0;
+    bottom: -28px;
+    font-family: var(--font-mono);
+    font-size: 9.5px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--faint);
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity 0.35s, transform 0.35s;
+  }
+  .spread figure:hover figcaption {
+    opacity: 1;
+    transform: none;
+  }
+  .spread figure[data-r="wide"], .spread figure[data-r="cinema"] { aspect-ratio: 16 / 9; }
+  .spread figure[data-r="land"] { aspect-ratio: 3 / 2; }
+  .spread figure[data-r="square"] { aspect-ratio: 1 / 1; }
+  .spread figure[data-r="tall"] { aspect-ratio: 4 / 5; }
+  .spread figure[data-r="port"] { aspect-ratio: 2 / 3; }
+  .spread figure[data-r="extra-tall"] { aspect-ratio: 3 / 5; }
+  .spread figure.is-loaded { aspect-ratio: auto; }
+
+  .spread figure:nth-child(7n+1) { width: 82%; margin-left: 0; margin-top: 0; }
+  .spread figure:nth-child(7n+2) { width: 92%; margin-left: auto; margin-top: 40px; }
+  .spread figure:nth-child(7n+3) { width: 74%; margin-left: 8%; margin-top: 90px; }
+  .spread figure:nth-child(7n+4) { width: 88%; margin-left: 0; margin-top: 30px; }
+  .spread figure:nth-child(7n+5) { width: 78%; margin-left: auto; margin-top: 70px; }
+  .spread figure:nth-child(7n+6) { width: 96%; margin-left: 0; margin-top: 20px; }
+  .spread figure:nth-child(7n+7) { width: 72%; margin-left: 14%; margin-top: 100px; }
+}
+
+@media (max-width: 1100px) {
+  .spread { columns: 2; column-gap: 48px; }
+  .spread figure { margin-bottom: 72px; }
+}
+@media (max-width: 720px) {
+  .spread { columns: 1; padding-inline: 8px; }
+  .spread figure { margin: 0 auto 48px !important; width: 100% !important; }
+  .spread figcaption { opacity: 1; transform: none; position: static; padding-top: 8px; }
+}
+
+/* ── Keyframes ────────────────────────────────────────────────────────────*/
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes blob {
+  0%, 100% { transform: scale(0.92) rotate(0deg); border-radius: 42% 58% 55% 45% / 50% 45% 55% 50%; }
+  50% { transform: scale(1.05) rotate(8deg); border-radius: 55% 45% 42% 58% / 45% 55% 50% 50%; }
+}
+@keyframes float {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(10px, -16px); }
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+@keyframes orbit {
+  from { transform: rotate(0deg) translateX(var(--orbit-r, 60px)) rotate(0deg); }
+  to { transform: rotate(360deg) translateX(var(--orbit-r, 60px)) rotate(-360deg); }
+}

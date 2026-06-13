@@ -1,0 +1,87 @@
+# To get started with Dependabot version updates, you'll need to specify which
+# package ecosystems to update and where the package manifests are located.
+# Please see the documentation for all configuration options:
+# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+# Note: unique combination of 'package-ecosystem', 'directory', and 'target-branch'
+
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: develop
+    labels:
+      - "dependabot :robot:"
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:30'
+      timezone: Europe/Zurich
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+
+  - package-ecosystem: devcontainers
+    directory: /
+    target-branch: develop
+    labels:
+      - "dependabot :robot:"
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:30'
+      timezone: Europe/Zurich
+    groups:
+      devcontainers:
+        patterns:
+          - "*"
+
+  - package-ecosystem: npm
+    directory: /
+    target-branch: develop
+    labels:
+      - "dependabot :robot:"
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:30'
+      timezone: Europe/Zurich
+    cooldown:
+      default-days: 1 # Match pnpm 11 default minimumReleaseAge (1440 min = 1 day)
+    ignore:
+      # Node version is pinned by hand (.nvmrc / engines.node / flake) — Dependabot
+      # must not bump @types/node out from under the chosen Node major.
+      - dependency-name: "@types/node"
+    groups:
+      # Group react-router + its siblings (@react-router/*) so a major lands as a
+      # single coordinated PR — they must version in lockstep. Minor/patch bumps
+      # don't match this major-only group, so they fall through to npm-non-breaking
+      # below and auto-merge like every other non-breaking update.
+      react-router:
+        patterns:
+          - "react-router"
+          - "@react-router/*"
+        update-types:
+          - major
+      npm-non-breaking:
+        update-types:
+          - minor
+          - patch
+
+  - package-ecosystem: nix
+    directory: /
+    target-branch: develop
+    labels:
+      - "dependabot :robot:"
+    schedule:
+      interval: weekly
+      day: monday
+      time: '09:30'
+      timezone: Europe/Zurich
+    # Bundle all flake inputs (nixpkgs, nix-utils, ...) into a single PR so the
+    # lock file is updated once per run instead of one PR per input.
+    groups:
+      flake:
+        patterns:
+          - "*"
