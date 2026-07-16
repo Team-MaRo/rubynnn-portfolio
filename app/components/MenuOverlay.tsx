@@ -1,5 +1,5 @@
 import type {Lang} from '~/i18n-config';
-import {useMemo, useState} from 'react';
+import {Fragment, useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {Link} from 'react-router';
 import {MENU, SOCIALS} from '~/content/menu';
@@ -117,17 +117,20 @@ export function MenuOverlay({open, locale, onClose}: Props) {
                     </Link>
                   </div>
                   {s.sub.length > 0 && (
-                    <div className={cn('flex-wrap gap-x-6 gap-y-2 pt-3', expanded === s.id ? 'flex' : 'hidden md:flex')}>
-                      {s.sub.map((sub) => (
-                        <Link
-                          key={sub.id}
-                          to={localePath(locale, sub.slug)}
-                          onClick={onClose}
-                          data-cursor="go"
-                          className="font-mono text-xs uppercase tracking-[0.12em] text-muted transition-colors hover:text-accent"
-                        >
-                          {pick(sub.label, locale)}
-                        </Link>
+                    <div className={cn('flex-wrap items-center gap-x-3 gap-y-2 pt-3', expanded === s.id ? 'flex' : 'hidden md:flex')}>
+                      {s.sub.map((sub, i) => (
+                        <Fragment key={sub.id}>
+                          {i > 0 && <span aria-hidden className="select-none text-faint">·</span>}
+                          <Link
+                            to={localePath(locale, sub.slug)}
+                            onClick={onClose}
+                            data-cursor="go"
+                            className="inline-flex items-center gap-1.5 font-mono text-xs uppercase tracking-[0.12em] text-muted transition-colors hover:text-accent"
+                          >
+                            <span aria-hidden className="text-accent">↗</span>
+                            {pick(sub.label, locale)}
+                          </Link>
+                        </Fragment>
                       ))}
                     </div>
                   )}

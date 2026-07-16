@@ -94,7 +94,7 @@ export default function Page() {
       <ProjSection id="m1" num={ofg.m1.num} title={t(ofg.m1.title)} lede={t(ofg.m1.lede)}>
         <BriefQuote quote={t(ofg.m1.quote)} who={t(ofg.m1.who)} />
 
-        <div className="mx-auto max-w-[1100px]">
+        <div className="max-w-[1100px]">
           <YouTube id={ofg.m1.video.id} title={t(ofg.m1.video.title)} />
           <p className="mt-3 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 font-mono text-2xs uppercase tracking-[0.12em] text-muted">
             <span className="text-fg">{t(ofg.m1.video.title)}</span>
@@ -151,7 +151,7 @@ export default function Page() {
       <ProjSection id="m2" num={ofg.m2.num} title={t(ofg.m2.title)} lede={t(ofg.m2.lede)}>
         <BriefQuote quote={t(ofg.m2.quote)} who={t(ofg.m2.who)} />
 
-        <div className="mx-auto max-w-[1100px]">
+        <div className="max-w-[1100px]">
           <YouTube id={ofg.m2.video.id} title={t(ofg.m2.video.title)} />
           <p className="mt-3 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 font-mono text-2xs uppercase tracking-[0.12em] text-muted">
             <span className="text-fg">{t(ofg.m2.video.title)}</span>
@@ -178,7 +178,7 @@ export default function Page() {
       <ProjSection id="m3" num={ofg.m3.num} title={t(ofg.m3.title)} lede={t(ofg.m3.lede)}>
         <BriefQuote quote={t(ofg.m3.quote)} who={t(ofg.m3.who)} />
 
-        <div className="mx-auto max-w-[1100px]">
+        <div className="max-w-[1100px]">
           <YouTube id={ofg.m3.video.id} title={t(ofg.m3.video.title)} />
           <p className="mt-3 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 font-mono text-2xs uppercase tracking-[0.12em] text-muted">
             <span className="text-fg">{t(ofg.m3.video.title)}</span>

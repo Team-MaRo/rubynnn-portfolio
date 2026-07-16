@@ -22,8 +22,8 @@ export default function Home() {
     <div className="min-h-dvh bg-bg text-fg">
       <TopNav locale={locale} />
 
-      <section id="top" className="flex min-h-dvh flex-col px-5 pt-24 md:px-8">
-        <div className="flex items-center justify-between gap-4 font-mono text-2xs uppercase tracking-[0.12em] text-muted">
+      <section id="top" className="flex flex-col px-5 pt-24 md:px-8">
+        <div className="mx-auto flex w-full max-w-[1500px] items-center justify-between gap-4 font-mono text-2xs uppercase tracking-[0.12em] text-muted">
           <span className="flex items-center gap-2">
             <span className="h-2 w-2 rounded-full bg-accent animate-pulse-dot" />
             {pick(HERO.now, locale)}
@@ -32,11 +32,11 @@ export default function Home() {
           <span>{HERO.loc}</span>
         </div>
 
-        <div className="flex flex-1 items-center">
+        <div className="flex items-center py-10 md:py-14">
           <HeroKinetic />
         </div>
 
-        <div className="grid grid-cols-1 items-end gap-8 border-t border-line py-10 lg:grid-cols-[1.2fr_1fr]">
+        <div className="mx-auto grid w-full max-w-[1500px] grid-cols-1 items-end gap-8 py-10 lg:grid-cols-[1.2fr_1fr]">
           <p
             className="max-w-[42ch] font-display text-xl font-light italic leading-snug text-balance [&_b]:font-normal [&_b]:text-accent"
             // eslint-disable-next-line react/dom-no-dangerously-set-innerhtml

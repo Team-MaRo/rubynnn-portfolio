@@ -1,5 +1,5 @@
-import {GifToggle, YouTube} from '~/components/project/Media';
-import {Masonry, ProjHero, ProjSection, Tag} from '~/components/project/primitives';
+import {GifToggle, VideoCard, XEmbed} from '~/components/project/Media';
+import {Masonry, ProjHero, ProjSection} from '~/components/project/primitives';
 import {ProjFoot} from '~/components/project/ProjFoot';
 import {TopNav} from '~/components/TopNav';
 import {viaGifs, viaMasonry, viaPosts, viaVideos} from '~/content/projects/via-award';
@@ -119,42 +119,9 @@ export default function Page() {
           locale,
         )}
       >
-        {/* Animated countdown banner reproduced with CSS/markup */}
-        <div className="mb-10 overflow-hidden rounded-sm border border-line bg-paper">
-          <div className="flex flex-col items-center gap-5 px-6 py-10 text-center sm:flex-row sm:justify-between sm:text-left">
-            <div>
-              <p className="font-mono text-2xs uppercase tracking-[0.2em] text-accent">{pick({de: 'Bewerbung läuft', en: 'Applications open'}, locale)}</p>
-              <p className="mt-2 font-display text-[clamp(22px,3vw,34px)] font-light italic leading-tight">
-                {pick({de: 'Apply now — bis Ende August', en: 'Apply now — until end of August'}, locale)}
-              </p>
-            </div>
-            <div className="flex items-center gap-3 font-mono" role="timer" aria-label={pick({de: 'Countdown', en: 'Countdown'}, locale)}>
-              {[
-                {v: '14', l: pick({de: 'Tage', en: 'Days'}, locale)},
-                {v: '08', l: pick({de: 'Std', en: 'Hrs'}, locale)},
-                {v: '32', l: pick({de: 'Min', en: 'Min'}, locale)},
-                {v: '05', l: pick({de: 'Sek', en: 'Sec'}, locale)},
-              ].map((u, i) => (
-                <div key={i} className="flex flex-col items-center">
-                  <span
-                    className="grid h-14 w-14 place-items-center rounded-sm bg-accent text-2xl font-bold text-bg"
-                    style={i === 3 ? {animation: 'pulse 1s steps(2) infinite'} : undefined}
-                  >
-                    {u.v}
-                  </span>
-                  <span className="mt-1.5 text-2xs uppercase tracking-[0.14em] text-faint">{u.l}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           {viaGifs.map((g) => (
-            <figure key={g.src}>
-              <GifToggle src={asset(g.src)} alt={pick(g.alt, locale)} />
-              <figcaption className="mt-3 font-mono text-2xs uppercase tracking-[0.12em] text-muted">{g.title}</figcaption>
-            </figure>
+            <GifToggle key={g.src} src={asset(g.src)} alt={pick(g.alt, locale)} caption={g.title} />
           ))}
         </div>
       </ProjSection>
@@ -171,15 +138,9 @@ export default function Page() {
           locale,
         )}
       >
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {viaVideos.map((v) => (
-            <figure key={v.id}>
-              <YouTube id={v.id} title={v.title} />
-              <figcaption className="mt-3 flex items-center justify-between gap-3 font-mono text-2xs uppercase tracking-[0.12em] text-muted">
-                <b className="font-normal text-fg">{v.title}</b>
-                <span className="text-faint">{v.tag}</span>
-              </figcaption>
-            </figure>
+            <VideoCard key={v.id} id={v.id} title={v.title} tag={v.tag} />
           ))}
         </div>
       </ProjSection>
@@ -196,28 +157,9 @@ export default function Page() {
           locale,
         )}
       >
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 items-start gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {viaPosts.map((p) => (
-            <a
-              key={p.href}
-              href={p.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              data-cursor="view"
-              className="group flex flex-col justify-between gap-6 rounded-sm border border-line bg-paper p-6 transition-colors hover:border-accent"
-            >
-              <div className="flex items-center justify-between">
-                <span aria-hidden className="font-display text-2xl not-italic text-fg">𝕏</span>
-                <Tag>Karger_Publish</Tag>
-              </div>
-              <div>
-                <p className="font-display text-xl italic leading-tight text-fg">{pick(p.title, locale)}</p>
-                <p className="mt-2 font-mono text-2xs uppercase tracking-[0.14em] text-faint">{pick(p.meta, locale)}</p>
-                <p className="mt-4 font-mono text-2xs uppercase tracking-[0.12em] text-accent">
-                  {pick({de: 'Auf X ansehen →', en: 'View on X →'}, locale)}
-                </p>
-              </div>
-            </a>
+            <XEmbed key={p.href} href={p.href} title={pick(p.title, locale)} tag={pick(p.meta, locale)} />
           ))}
         </div>
       </ProjSection>

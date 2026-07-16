@@ -282,3 +282,157 @@ html.dark {
   from { transform: rotate(0deg) translateX(var(--orbit-r, 60px)) rotate(0deg); }
   to { transform: rotate(360deg) translateX(var(--orbit-r, 60px)) rotate(-360deg); }
 }
+
+/* ── Home hero motion graphic ──────────────────────────────────────────────
+   Ported from the Claude Design handoff (hero-motion.html). Concentric
+   rotating rings, a spinning + pulsing centre blob, three orbiting bullets, a
+   12-spoke bloom, drifting squares, a diagonal light sweep and signal bars.
+   Everything reads the runtime tokens (`--fg`/`--accent`/`--accent-soft`/`--bg`)
+   so it re-themes with the light/dark cascade, and every element animates via
+   standard `animation`, so the reduced-motion blanket above freezes the whole
+   graphic to a clean static frame. `--motion` (0 → still, 1 → lively) scales
+   every duration. */
+.hero-graphic {
+  --motion: 0.55;
+  --m: max(0.1, var(--motion));
+  position: relative;
+  width: 100%;
+  max-width: var(--container-max);
+  margin-inline: auto;
+  aspect-ratio: 16 / 8;
+  max-height: 540px;
+  min-height: 340px;
+  isolation: isolate;
+  overflow: hidden;
+  background: oklch(from var(--accent-soft) l c h / 0.25);
+}
+.hero-graphic .hg-ring,
+.hero-graphic .hg-ring2,
+.hero-graphic .hg-blob,
+.hero-graphic .hg-bloom {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.hero-graphic svg { display: block; width: 100%; height: 100%; }
+
+.hg-ring { width: 90%; max-width: 540px; aspect-ratio: 1; animation: hg-spin calc(24s / var(--m)) linear infinite; }
+.hg-ring2 { width: 60%; max-width: 380px; aspect-ratio: 1; animation: hg-spin calc(18s / var(--m)) linear infinite reverse; }
+@keyframes hg-spin { to { transform: translate(-50%, -50%) rotate(360deg); } }
+
+.hg-blob { width: 36%; max-width: 240px; aspect-ratio: 1; animation: hg-spin calc(30s / var(--m)) linear infinite; }
+.hg-blob-path { transform-origin: 50% 50%; animation: hg-blob-pulse calc(6s / var(--m)) ease-in-out infinite alternate; }
+@keyframes hg-blob-pulse {
+  0%   { transform: scale(0.88) rotate(0deg); }
+  50%  { transform: scale(1.08) rotate(20deg); }
+  100% { transform: scale(0.96) rotate(-12deg); }
+}
+
+.hg-bloom { width: 24%; max-width: 160px; aspect-ratio: 1; z-index: 3; mix-blend-mode: difference; }
+.hg-bloom-spoke {
+  transform-origin: 100px 100px;
+  animation: hg-spoke calc(2.4s / var(--m)) cubic-bezier(0.5, 0, 0.3, 1) infinite;
+  animation-delay: calc(var(--i) * -0.18s);
+}
+@keyframes hg-spoke {
+  0%, 100% { transform: rotate(calc(var(--i) * 30deg)) scale(0.6); opacity: 0; }
+  40%      { transform: rotate(calc(var(--i) * 30deg)) scale(1); opacity: 1; }
+  60%      { transform: rotate(calc(var(--i) * 30deg + 20deg)) scale(1); opacity: 1; }
+}
+
+.hg-orbit { position: absolute; top: 50%; left: 50%; width: 0; height: 0; }
+.hg-orbit span { position: absolute; top: -9px; left: -9px; width: 18px; height: 18px; border-radius: 50%; background: var(--fg); }
+.hg-orbit-1 { animation: hg-orbit calc(7s / var(--m)) linear infinite; }
+.hg-orbit-2 { animation: hg-orbit calc(11s / var(--m)) linear infinite reverse; }
+.hg-orbit-3 { animation: hg-orbit calc(14s / var(--m)) linear infinite; }
+.hg-orbit-1 span { transform: translateX(220px); }
+.hg-orbit-2 span { width: 14px; height: 14px; background: var(--accent); transform: translateX(160px); }
+.hg-orbit-3 span { width: 10px; height: 10px; background: var(--accent-soft); transform: translateX(280px); }
+@keyframes hg-orbit { to { transform: rotate(360deg); } }
+
+.hg-squares { position: absolute; inset: 0; pointer-events: none; }
+.hg-sq {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 14px; height: 14px;
+  background: var(--fg);
+  animation: hg-square-drift calc(9s / var(--m)) ease-in-out infinite alternate;
+  animation-delay: var(--delay);
+}
+.hg-sq:nth-child(odd) { width: 8px; height: 8px; background: var(--accent); }
+.hg-sq:nth-child(3n) { width: 10px; height: 10px; }
+@keyframes hg-square-drift {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); opacity: 0.8; }
+  50%      { transform: translate(40px, -30px) rotate(180deg); opacity: 0.3; }
+}
+
+.hg-sweep {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(110deg, transparent 40%, oklch(from var(--fg) l c h / 0.08) 50%, transparent 60%);
+  background-size: 300% 100%;
+  animation: hg-sweep calc(8s / var(--m)) linear infinite;
+}
+@keyframes hg-sweep { to { background-position: -300% 0; } }
+
+.hg-signal {
+  position: absolute;
+  left: 32px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.hg-signal span {
+  display: block;
+  width: 60px;
+  height: 1px;
+  background: var(--fg);
+  transform-origin: left center;
+  animation: hg-signal calc(3s / var(--m)) ease-in-out infinite alternate;
+  animation-delay: calc(var(--i) * 0.2s);
+}
+@keyframes hg-signal {
+  0%   { transform: scaleX(0.3); opacity: 0.4; }
+  100% { transform: scaleX(1); opacity: 1; }
+}
+
+.hg-hint {
+  position: absolute;
+  right: 32px;
+  bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+  color: var(--muted);
+}
+.hg-hint-arrow { color: var(--accent); }
+
+@media (max-width: 900px) {
+  .hero-graphic { aspect-ratio: 4 / 3; }
+  .hg-signal { display: none; }
+}
+
+/* ── Work-tile generative art (ported from the design's tile-art.jsx) ───────
+   Full-bleed artwork rendered behind each work tile. Keyframes are namespaced
+   `ta-`; the reduced-motion blanket above freezes them to static frames. */
+@keyframes ta-loop-pulse { 0% { transform: scale(0.7); } 100% { transform: scale(1.05); } }
+@keyframes ta-loop-beat { 0%, 100% { r: 8px; } 50% { r: 14px; } }
+@keyframes ta-ribbon-wave { 0% { transform: translateY(-20px); } 100% { transform: translateY(20px); } }
+@keyframes ta-orbit { to { transform: rotate(360deg); } }
+@keyframes ta-book-sway { 0% { transform: rotate(-3deg); } 100% { transform: rotate(3deg); } }
+@keyframes ta-wedd-drift { 0% { transform: translateX(-8px); } 100% { transform: translateX(8px); } }
+@keyframes ta-flyer-stretch { 0% { transform: scaleX(0.95); } 100% { transform: scaleX(1.05); } }
+@keyframes ta-icon-blink { 0% { opacity: 0.3; } 100% { opacity: 1; } }
+@keyframes ta-jline { to { stroke-dashoffset: 0; } }
+@keyframes ta-sun-glow { 0% { r: 78px; } 100% { r: 88px; } }
+@keyframes ta-thai-wave { 0% { transform: translateX(-10px); } 100% { transform: translateX(10px); } }
+@keyframes ta-jp-pulse { 0% { transform: scale(1); } 100% { transform: scale(1.08); } }
